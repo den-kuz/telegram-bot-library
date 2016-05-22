@@ -15,171 +15,129 @@ class Message extends BaseModel
 {
     const TYPES = [
         'from'                  => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'User'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'User'
             ]
         ],
         'chat'                  => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Chat'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Chat'
             ]
         ],
         'forward_from'          => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'User'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'User'
             ]
         ],
         'forward_from_chat'     => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Chat'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Chat'
             ]
         ],
         'reply_to_message'      => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Message'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Message'
             ]
         ],
         'entities'              => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'array',
-                    'class' => __NAMESPACE__ . '\\' . 'MessageEntity'
-                ]
+            'CreateWith' => [
+                'type'  => 'array',
+                'class' => __NAMESPACE__ . '\\' . 'MessageEntity'
             ]
         ],
         'audio'                 => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Audio'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Audio'
             ]
         ],
         'document'              => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Document'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Document'
             ]
         ],
         'photo'                 => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'PhotoSize'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'PhotoSize'
             ]
         ],
         'sticker'               => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Sticker'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Sticker'
             ]
         ],
         'video'                 => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Video'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Video'
             ]
         ],
         'voice'                 => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Voice'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Voice'
             ]
         ],
         'contact'               => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Contact'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Contact'
             ]
         ],
         'location'              => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Location'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Location'
             ]
         ],
         'venue'                 => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Venue'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Venue'
             ]
         ],
         'new_chat_member'       => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'User'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'User'
             ]
         ],
         'new_chat_participant'  => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'User'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'User'
             ]
         ],
         'left_chat_member'      => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'User'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'User'
             ]
         ],
         'left_chat_participant' => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'User'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'User'
             ]
         ],
         'new_chat_photo'        => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'PhotoSize'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'PhotoSize'
             ]
         ],
         'pinned_message'        => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Message'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Message'
             ]
         ]
     ];
@@ -337,6 +295,7 @@ class Message extends BaseModel
      */
     public $pinned_message;
 
+    
     /**
      * @param $type
      * @return MessageEntity[]

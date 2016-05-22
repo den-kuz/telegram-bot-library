@@ -15,11 +15,9 @@ class UserProfilePhotos extends BaseModel
 {
     const TYPES = [
         'photos' => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'array of array',
-                    'class' => __NAMESPACE__ . '\\' . 'PhotoSize'
-                ]
+            'CreateWith' => [
+                'type'  => 'array of array',
+                'class' => __NAMESPACE__ . '\\' . 'PhotoSize'
             ]
         ]
     ];

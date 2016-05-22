@@ -15,11 +15,9 @@ class Venue extends BaseModel
 {
     const TYPES = [
         'location' => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Location'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Location'
             ]
         ]
     ];
