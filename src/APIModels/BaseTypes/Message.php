@@ -333,7 +333,23 @@ class Message extends BaseModel
      */
     public $migrate_from_chat_id;
     /**
-     * @var    Message
+     * @var Message
      */
     public $pinned_message;
+
+    /**
+     * @param $type
+     * @return MessageEntity[]
+     */
+    public function getEntities($type)
+    {
+        $entities = [];
+        if (is_array($this->entities)) {
+            foreach ($this->entities as $entity) {
+                if ($entity->type == $type) $entities[] = $entity;
+            }
+        }
+        
+        return $entities;
+    }
 }
