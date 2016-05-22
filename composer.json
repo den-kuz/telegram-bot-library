@@ -1,0 +1,17 @@
+{
+  "name": "dkuznetsov/telegram-bot-library",
+  "description": "PHP library for Telegram Bot API",
+  "minimum-stability": "dev",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "D. Kuznetsov",
+      "email": "mixrus09@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "TelegramBotLibrary\\": "src/"
+    }
+  }
+}
