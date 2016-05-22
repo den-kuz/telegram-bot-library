@@ -14,56 +14,14 @@ abstract class BaseModel
 {
     /**
      * Описание типов переменных класса
-     * Описываются каждый в своем классе
+     * При указании опции CreateWith будет создан экземпляр (или массив экзепляров) указанного класса
+     * и будет передан ему в конструктор значение из config'а
      *
-     * Доступные типы - возвращаемые функцией gettype PHP:
-     * boolean, integer, double, string, array, object, resource, NULL
-     *
-     * Установите ключ CreateWith для того чтобы создавать объект с этим классом
-     *
-     * Типы и названия классов регистрозависимы! Указывайте типы так, как описано выше
-     * и названия классов
-     * Шаблоны описания типов (один или несколько описаний из раздела 'types'
      * [
      *      'variable_name' => [
-     *          'availableTypes' => [
-     *              [
-     *                  'type'  => 'integer'
-     *              ],
-     *              [
-     *                  'type'  => 'boolean'
-     *              ],
-     *              [
-     *                  'type'  => 'double'
-     *              ],
-     *              [
-     *                  'type'  => 'string'
-     *              ],
-     *              [
-     *                  'type'  => 'array'
-     *              ],
-     *              [
-     *                  'type'  => 'array',
-     *                  'typeOf' => 'integer|boolean|double|string|object|array|resource|NULL'
-     *              ],
-     *              [
-     *                  'type'  => 'array',
-     *                  'typeOf' => 'object'
-     *                  'classOf' => 'ClassName'
-     *              ],
-     *              [
-     *                  'type'  => 'object'
-     *              ],
-     *              'CreateWith' => [
-     *                  'type'  => 'object',
-     *                  'class' => 'ClassName'
-     *              ],
-     *              [
-     *                  'type'  => 'resource'
-     *              ],
-     *              [
-     *                  'type'  => 'NULL'
-     *              ]
+     *          'CreateWith' => [
+     *              'type' => 'object || array || array of array',
+     *              'class' => CLASS_NAME
      *          ]
      *      ]
      * ]
@@ -84,45 +42,40 @@ abstract class BaseModel
             if( isset( $typesConfiguration->{$key} ) && $use_mapper === true ) {
                 $keyConfigSet = $typesConfiguration->{$key};
 
-                // в конфиге есть описание типов
-                if( isset($keyConfigSet->availableTypes) )  {
-                    $typesSet = $keyConfigSet->availableTypes;
+                if( isset($keyConfigSet->CreateWith) ) {
+                    if (!isset($keyConfigSet->CreateWith->type)) throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
 
-                    if( isset($typesSet->CreateWith) && !isset($typesSet->CreateWith->type)) {
-                        throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
-                    }
-                    
-                    switch ($typesSet->CreateWith->type) {
+                    switch ($keyConfigSet->CreateWith->type) {
                         case 'object':
-                            if( !isset($typesSet->CreateWith->class) ) {
+                            if (!isset($keyConfigSet->CreateWith->class)) {
                                 throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
                             }
-                            $class = $typesSet->CreateWith->class;
+                            $class = $keyConfigSet->CreateWith->class;
                             $this->$key = new $class($val);
                             break;
-                        
+
                         case 'array':
-                            if( !isset($typesSet->CreateWith->class) ) {
+                            if (!isset($keyConfigSet->CreateWith->class)) {
                                 throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
                             }
-                            $class = $typesSet->CreateWith->class;
+                            $class = $keyConfigSet->CreateWith->class;
                             foreach ($val as $valKey => $valVal) {
                                 $this->{$key}[$valKey] = new $class($valVal);
                             }
                             break;
-                        
+
                         case 'array of array':
-                            if( !isset($typesSet->CreateWith->class) ) {
+                            if (!isset($keyConfigSet->CreateWith->class)) {
                                 throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
                             }
-                            $class = $typesSet->CreateWith->class;
+                            $class = $keyConfigSet->CreateWith->class;
                             foreach ($val as $valueKey => $valueArray) {
                                 foreach ($valueArray as $valueInnerKey => $valueInnerValue) {
                                     $this->{$key}[$valueKey][$valueInnerKey] = new $class($valueInnerValue);
                                 }
                             }
                             break;
-                        
+
                         default:
                             $this->{$key} = $val;
                             break;

@@ -15,11 +15,9 @@ class ChatMember extends BaseModel
 {
     const TYPES = [
         'user' => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'User'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'User'
             ]
         ]
     ];

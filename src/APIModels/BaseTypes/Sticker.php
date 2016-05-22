@@ -14,11 +14,9 @@ class Sticker extends BaseModel
 {
     const TYPES = [
         'thumb' => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'PhotoSize'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'PhotoSize'
             ]
         ]
     ];

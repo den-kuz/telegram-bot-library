@@ -15,11 +15,9 @@ class Update extends BaseModel
 {
     const TYPES = [
         'message' => [
-            'availableTypes' => [
-                'CreateWith' => [
-                    'type'  => 'object',
-                    'class' => __NAMESPACE__ . '\\' . 'Message'
-                ]
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Message'
             ]
         ]
     ];
