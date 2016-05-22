@@ -8,19 +8,23 @@
 
 namespace TelegramBotLibrary;
 
+use TelegramBotLibrary\APIModels\BaseTypes\Chat;
+use TelegramBotLibrary\APIModels\BaseTypes\ChatMember;
 use TelegramBotLibrary\APIModels\BaseTypes\Update;
 use TelegramBotLibrary\APIModels\BaseTypes\User;
-use TelegramBotLibrary\APIModels\SendTypes\SendAudio;
-use TelegramBotLibrary\APIModels\SendTypes\SendContact;
-use TelegramBotLibrary\APIModels\SendTypes\SendDocument;
-use TelegramBotLibrary\APIModels\SendTypes\SendForwardMessage;
-use TelegramBotLibrary\APIModels\SendTypes\SendLocation;
-use TelegramBotLibrary\APIModels\SendTypes\SendMesssage;
-use TelegramBotLibrary\APIModels\SendTypes\SendPhoto;
-use TelegramBotLibrary\APIModels\SendTypes\SendSticker;
-use TelegramBotLibrary\APIModels\SendTypes\SendVenue;
-use TelegramBotLibrary\APIModels\SendTypes\SendVideo;
-use TelegramBotLibrary\APIModels\SendTypes\SendVoice;
+use TelegramBotLibrary\APIModels\BaseTypes\UserProfilePhotos;
+use TelegramBotLibrary\APIModels\GetModels\GetUserProfilePhotos;
+use TelegramBotLibrary\APIModels\SendModels\SendAudio;
+use TelegramBotLibrary\APIModels\SendModels\SendContact;
+use TelegramBotLibrary\APIModels\SendModels\SendDocument;
+use TelegramBotLibrary\APIModels\SendModels\SendForwardMessage;
+use TelegramBotLibrary\APIModels\SendModels\SendLocation;
+use TelegramBotLibrary\APIModels\SendModels\SendMesssage;
+use TelegramBotLibrary\APIModels\SendModels\SendPhoto;
+use TelegramBotLibrary\APIModels\SendModels\SendSticker;
+use TelegramBotLibrary\APIModels\SendModels\SendVenue;
+use TelegramBotLibrary\APIModels\SendModels\SendVideo;
+use TelegramBotLibrary\APIModels\SendModels\SendVoice;
 use TelegramBotLibrary\Exceptions\TelegramBotException;
 
 class TelegramBot
@@ -31,7 +35,7 @@ class TelegramBot
     private $request;
 
     /**
-     * TeleBot constructor.
+     * TelegramBot constructor.
      *
      * @param $token - Токен бота
      * @param bool $skipPrevUpdates - пропустить предыдущие обновления, если они есть
@@ -45,45 +49,27 @@ class TelegramBot
         if ($skipPrevUpdates) $this->skipUpdates();
     }
 
-    /**
-     * Возвращает информацию о боте в классе User
-     *
-     * @return mixed|User
-     * @throws TelegramBotException
-     */
-    public function getMe()
-    {
-        if (!$this->botUser) {
-            $getMeResult = $this->request->query('getMe');
-            $this->botUser = new User($getMeResult);
-        }
-        return $this->botUser;
-    }
+    // <editor-fold defaultstate="collapsed" desc="Работа с обновлениями">
 
     /**
      * Получает апдейты, которые были посланы боту
      *
      * @param int $limit - количество получаемых апдейтов от 1 до 100
      * @param int $offset - ID апдейта, начиная с которого получать
-     * @return array
+     * @return array|Update[]
      * @throws TelegramBotException
      */
     public function getUpdates($limit = 100, $offset = 0)
     {
-        $params = [
-            'limit'  => $limit,
-            'offset' => $offset
-        ];
-
-        $updates = $this->request->query('getUpdates', $params);
-
-        if (!empty($updates)) {
-            $lastUpdate = new Update(end($updates));
-            $this->lastUpdateID = isset($lastUpdate->update_id) ? $lastUpdate->update_id : 0;
-        }
+        $updates = $this->request->query('getUpdates', [ 'limit'  => $limit, 'offset' => $offset ]);
 
         $updatesArray = [];
-        foreach ($updates as $update) $updatesArray[] = new Update($update);
+        if ( !empty($updates) ) {
+            foreach ($updates as $update) $updatesArray[] = new Update($update);
+
+            $lastUpdate = new Update( end($updates) );
+            $this->lastUpdateID = isset($lastUpdate->update_id) ? $lastUpdate->update_id : 0;
+        }
 
         return $updatesArray;
     }
@@ -111,12 +97,15 @@ class TelegramBot
      * Получает последние обновления
      *
      * @param int $limit - количество получаемых обновлений
-     * @return array
+     * @return array|Update[]
      */
     public function getLastUpdates($limit = 100)
     {
         return $this->getUpdates($limit, (int)$this->lastUpdateID + 1);
     }
+
+    // </editor-fold>
+    // <editor-fold desc="Отправка данных">
 
     /**
      * Отправляет сообщения
@@ -231,6 +220,70 @@ class TelegramBot
         $this->request->query('sendContact', $contact->convertToQuery());
     }
 
+    public function sendChatAction($chat_id, $action) {
+        $this->request->query('sendChatAction', [ 'chat_id' => $chat_id, 'action' => $action ]);
+    }
+    // </editor-fold>
+    // <editor-fold desc="Получение данных (исключая обновления)">
+
+    /**
+     * Возвращает информацию о боте в классе User
+     *
+     * @return mixed|User
+     * @throws TelegramBotException
+     */
+    public function getMe()
+    {
+        if (!$this->botUser) {
+            $getMeResult = $this->request->query('getMe');
+            $this->botUser = new User( $getMeResult );
+        }
+        return $this->botUser;
+    }
+
+    /**
+     * Получает фотографии профиля пользователя. Каждая фотография в 4-х размерах
+     * 
+     * @param $user_id
+     * @param null $offset
+     * @param null $limit
+     * @throws TelegramBotException
+     * @return UserProfilePhotos
+     */
+    public function getUserProfilePhotos($user_id, $offset = null, $limit = null) {
+        $GetUserPhoto = new GetUserProfilePhotos([ 'user_id' => $user_id, 'offset' => $offset, 'limit' => $limit ]);
+        $response = $this->request->query('getUserProfilePhotos', $GetUserPhoto->convertToQuery());
+
+        return new UserProfilePhotos($response);
+    }
+
+    public function getChatAdministrators($chat_id) {
+        $response = $this->request->query( 'getChatAdministrators', ['chat_id' => $chat_id] );
+
+        $members = [];
+        foreach ($response as $member) $members[] = new ChatMember($member);
+        return $members;
+    }
+
+    public function getChat($chat_id) {
+        $response = $this->request->query( 'getChat', ['chat_id' => $chat_id] );
+
+        return new Chat($response);
+    }
+
+    public function getChatMembersCount($chat_id) {
+        $response = $this->request->query( 'getChatMembersCount', ['chat_id' => $chat_id] );
+
+        return $response;
+    }
+
+    public function getChatMember($chat_id, $user_id) {
+        $response = $this->request->query( 'getChatMembersCount', ['chat_id' => $chat_id, 'user_id' => $user_id] );
+
+        return new ChatMember($response);
+    }
+    // </editor-fold>
+    
     /**
      * Получить токен бота
      *

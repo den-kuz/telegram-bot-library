@@ -3,20 +3,19 @@
  * Created by PhpStorm.
  * User: d.kuznetsov
  * Date: 22.05.2016
- * Time: 20:26
+ * Time: 20:18
  */
 
-namespace TelegramBotLibrary\APIModels\SendTypes;
+namespace TelegramBotLibrary\APIModels\SendModels;
 
 
 use TelegramBotLibrary\APIModels\BaseModels\SendFileBaseModel;
 
-class SendVideo extends SendFileBaseModel
+class SendDocument extends SendFileBaseModel
 {
+    const TYPE = 'document';
+
     public $chat_id;
-    public $video;
-    public $duration;
-    public $width;
-    public $height;
+    public $document;
     public $caption;
 }

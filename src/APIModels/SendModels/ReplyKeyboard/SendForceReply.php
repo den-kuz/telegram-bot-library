@@ -3,17 +3,16 @@
  * Created by PhpStorm.
  * User: d.kuznetsov
  * Date: 22.05.2016
- * Time: 20:24
+ * Time: 20:19
  */
 
-namespace TelegramBotLibrary\APIModels\SendTypes\ReplyKeyboard;
-
+namespace TelegramBotLibrary\APIModels\SendModels\ReplyKeyboard;
 
 use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;
 
-class SendReplyKeyboardHide extends SendBaseModel
+class SendForceReply extends SendBaseModel
 {
-    public $hide_keyboard = true;
+    public $force_reply = true;
     public $selective;
 
     public function convertToQuery() {

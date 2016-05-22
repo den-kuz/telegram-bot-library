@@ -3,17 +3,16 @@
  * Created by PhpStorm.
  * User: d.kuznetsov
  * Date: 22.05.2016
- * Time: 20:20
+ * Time: 20:23
  */
 
-namespace TelegramBotLibrary\APIModels\SendTypes;
-
+namespace TelegramBotLibrary\APIModels\SendModels;
 
 use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;
 
-class SendForwardMessage extends SendBaseModel
+class SendLocation extends SendBaseModel
 {
     public $chat_id;
-    public $from_chat_id;
-    public $message_id;
+    public $latitude;
+    public $longitude;
 }

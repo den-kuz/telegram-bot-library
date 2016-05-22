@@ -6,7 +6,7 @@
  * Time: 20:26
  */
 
-namespace TelegramBotLibrary\APIModels\SendTypes;
+namespace TelegramBotLibrary\APIModels\SendModels;
 
 
 class SendVenue extends SendLocation

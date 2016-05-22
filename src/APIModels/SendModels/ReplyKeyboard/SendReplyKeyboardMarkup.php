@@ -6,7 +6,7 @@
  * Time: 20:25
  */
 
-namespace TelegramBotLibrary\APIModels\SendTypes\ReplyKeyboard;
+namespace TelegramBotLibrary\APIModels\SendModels\ReplyKeyboard;
 
 
 use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;

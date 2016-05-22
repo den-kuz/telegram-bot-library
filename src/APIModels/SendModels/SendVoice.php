@@ -6,13 +6,15 @@
  * Time: 20:27
  */
 
-namespace TelegramBotLibrary\APIModels\SendTypes;
+namespace TelegramBotLibrary\APIModels\SendModels;
 
 
 use TelegramBotLibrary\APIModels\BaseModels\SendFileBaseModel;
 
 class SendVoice extends SendFileBaseModel
 {
+    const TYPE = 'voice';
+
     public $chat_id;
     public $voice;
     public $duration;

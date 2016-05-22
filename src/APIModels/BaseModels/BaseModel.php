@@ -77,39 +77,55 @@ abstract class BaseModel
     public function __construct($config = [], $use_mapper = true) {
         if( !is_array($config) ) $config = [];
 
-        foreach ($config as $key => $val) {
+        $typesConfiguration = (object)json_decode(json_encode( $this->getTypes() ));
 
+        foreach ($config as $key => $val) {
             // для этого поля массива есть конфиг в поле TYPES
-            if( isset($this->getTypes()[$key]) && $use_mapper == true ) {
-                $keyConfigSet = $this->getTypes()[$key];
+            if( isset( $typesConfiguration->{$key} ) && $use_mapper === true ) {
+                $keyConfigSet = $typesConfiguration->{$key};
 
                 // в конфиге есть описание типов
-                if( isset($keyConfigSet['availableTypes']) && is_array($keyConfigSet['availableTypes']) )  {
-                    $typesSet = $keyConfigSet['availableTypes'];
+                if( isset($keyConfigSet->availableTypes) )  {
+                    $typesSet = $keyConfigSet->availableTypes;
 
-                    // передать в класс указанный в 'CreateWith' класс значение поля $val
-                    if( isset($typesSet['CreateWith']) ) {
-                        $createWith = $typesSet['CreateWith'];
-                        if(
-                            isset($createWith['type']) &&
-                            $createWith['type'] == 'object' &&
-                            isset($createWith['class'])
-                        ) {
-                            $class = $createWith['class'];
+                    if( isset($typesSet->CreateWith) && !isset($typesSet->CreateWith->type)) {
+                        throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
+                    }
+                    
+                    switch ($typesSet->CreateWith->type) {
+                        case 'object':
+                            if( !isset($typesSet->CreateWith->class) ) {
+                                throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
+                            }
+                            $class = $typesSet->CreateWith->class;
                             $this->$key = new $class($val);
-                        } elseif(
-                            isset($createWith['type']) &&
-                            $createWith['type'] == 'array' &&
-                            isset($createWith['class'])
-                        ) {
-                            $this->$key = [];
+                            break;
+                        
+                        case 'array':
+                            if( !isset($typesSet->CreateWith->class) ) {
+                                throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
+                            }
+                            $class = $typesSet->CreateWith->class;
                             foreach ($val as $valKey => $valVal) {
-                                $class = $createWith['class'];
                                 $this->{$key}[$valKey] = new $class($valVal);
                             }
-                        } else {
-                            throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
-                        }
+                            break;
+                        
+                        case 'array of array':
+                            if( !isset($typesSet->CreateWith->class) ) {
+                                throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
+                            }
+                            $class = $typesSet->CreateWith->class;
+                            foreach ($val as $valueKey => $valueArray) {
+                                foreach ($valueArray as $valueInnerKey => $valueInnerValue) {
+                                    $this->{$key}[$valueKey][$valueInnerKey] = new $class($valueInnerValue);
+                                }
+                            }
+                            break;
+                        
+                        default:
+                            $this->{$key} = $val;
+                            break;
                     }
                 } else {
                     $this->$key = $val;

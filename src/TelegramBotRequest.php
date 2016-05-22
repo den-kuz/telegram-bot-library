@@ -45,7 +45,7 @@ class TelegramBotRequest
      */
     public function query($method, $parameters = null) {
         $postFields = is_array($parameters);
-
+        
         if($postFields) {
             $contentType = 'multipart/form-data';
         } else {

@@ -6,7 +6,7 @@
  * Time: 20:18
  */
 
-namespace TelegramBotLibrary\APIModels\SendTypes;
+namespace TelegramBotLibrary\APIModels\SendModels;
 
 
 use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;
