@@ -19,6 +19,13 @@ class Update extends BaseModel
                 'type'  => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Message'
             ]
+        ],
+
+        'edited_message' => [
+            'CreateWith' => [
+                'type'  => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'Message'
+            ]
         ]
     ];
 
@@ -31,4 +38,9 @@ class Update extends BaseModel
      * @var Message
      */
     public $message;
+
+    /**
+     * @var Message
+     */
+    public $edited_message;
 }

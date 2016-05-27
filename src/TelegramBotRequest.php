@@ -8,7 +8,6 @@
 
 namespace TelegramBotLibrary;
 
-
 use TelegramBotLibrary\Exceptions\TelegramBotException;
 
 class TelegramBotRequest
@@ -32,16 +31,19 @@ class TelegramBotRequest
     }
 
     /**
-     * @param $method
+     * Возвращает полный URL для обращения к API Telegram Bots
+     *
+     * @param $method - метод
      * @return string
      */
     private function getAPIUrlByMethod($method) {
         return str_replace('{method}', $method, $this->API_URL);
     }
 
-
     /**
-     * @param $path
+     * Возвращает полный URL для скачивания файла с сервера Telegram
+     *
+     * @param $path - путь на сервере
      * @return string
      */
     private function getFileUrlByPath($path) {
@@ -49,8 +51,12 @@ class TelegramBotRequest
     }
 
     /**
-     * @param $method
-     * @param null $parameters
+     * Производит запрос к API Telegram Bots
+     * Возвращает результат в виде ассоциативного массива
+     *
+     * @param $method - вызываемый метод
+     * @param null|array $parameters - массив параметров
+     *
      * @return array
      * @throws TelegramBotException
      */
@@ -58,6 +64,8 @@ class TelegramBotRequest
         $postFields = is_array($parameters);
         $contentType = $postFields ? 'multipart/form-data' : 'application/json';
 
+        // CURL init
+        // ---------------------------------------------------------------
         $curlDescriptor = curl_init( $this->getAPIUrlByMethod($method) );
         curl_setopt_array(
             $curlDescriptor,
@@ -69,11 +77,12 @@ class TelegramBotRequest
         );
 
         if ( $postFields ) curl_setopt($curlDescriptor, CURLOPT_POSTFIELDS, $parameters);
+        // ---------------------------------------------------------------
 
         $apiResponse = curl_exec($curlDescriptor);
         $apiResponse = json_decode($apiResponse, true);
         curl_close($curlDescriptor);
-
+        
         if( !isset( $apiResponse['ok'] ) ) {
             throw new TelegramBotException( 'Данные не получены', 1000 );
         } elseif ( $apiResponse['ok'] == false ) {
@@ -85,35 +94,86 @@ class TelegramBotRequest
         return [];
     }
 
-    public function downloadTelegramFile($file_path, $save_dir, $save_name)
+    /**
+     * Метод-обертка для метода download
+     * Скачивает файл с сервера Telegram и возвращает полный путь к скачанному файлу
+     *
+     * @param $serverPath - путь на сервере Telegram
+     * @param $saveDir - Папка для сохранения
+     * @param null $originalFilename - оригинальное имя файла, если известно
+     * @param bool $saveHashed - см. в методе download
+     *
+     * @return string
+     * @throws TelegramBotException
+     */
+    public function downloadTelegramFile($serverPath, $saveDir = './', $originalFilename = null, $saveHashed = true)
     {
-        $url = $this->getFileUrlByPath($file_path);
-        
-        return static::download($url, $save_dir, $save_name);
+        $url = $this->getFileUrlByPath($serverPath);
+        return static::download($url, $saveDir, $originalFilename, $saveHashed);
     }
 
-    private static function download($link, $path = './', $name = null) {
+
+    /**
+     * Скачивает файл.
+     * Если не указан $filename - сохраняется с именем хэша от microtime()
+     * Если указан $saveHashed - имя файла = хэш(контент файла + $filename)
+     * Возвращает полный путь к скачанному файлу
+     *
+     * @param $link - ссылка на файл
+     * @param string $dir - директория сохранения
+     * @param string $filename - имя файла
+     * @param boolean $saveHashed -
+     *        сохранить файл с хэшированным именем
+     *        (обеспечивает уникальность файлов, хэш берется от контента файла + $filename)
+     *
+     * @return string
+     * @throws TelegramBotException
+     */
+    private static function download($link, $dir = './', $filename = null, $saveHashed = true) {
+        $realPathDir = realpath($dir);
+
+        if( !is_dir($realPathDir) ) @mkdir($realPathDir, 0777, true);
+        if( !is_dir($realPathDir) ) throw new TelegramBotException('Save folder not found');
+        if(
+            (
+                is_null($filename) ||
+                !is_string($filename)
+            ) &&
+            $saveHashed === false
+        ) $filename = hash('md5', microtime());
+
+        $theoricPath = realpath($realPathDir) . DIRECTORY_SEPARATOR . $filename;
+
+        if( is_file($theoricPath) ) return $theoricPath;
+
         $curlDescriptor = curl_init($link);
         curl_setopt_array(
             $curlDescriptor,
             [
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HEADER => 0,
+                CURLOPT_HEADER => 0
             ]
         );
-
+        
         $fileContent = curl_exec($curlDescriptor);
+        $code = curl_getinfo($curlDescriptor, CURLINFO_HTTP_CODE);
+        curl_close($curlDescriptor);
         
-        if( !is_string($name) || empty($name) ) $name = md5($link);
-        $path = realpath($path);
+        if($code !== 200)           throw new TelegramBotException('File not found');
+        if( empty($fileContent) )   throw new TelegramBotException('File is empty');
 
-        file_put_contents($path . '/' . $name, $fileContent);
-        
-        return $path . '/' . $name;
+        if($saveHashed) {
+            $theoricPath = realpath($realPathDir) . DIRECTORY_SEPARATOR . hash('md5', $fileContent . $filename);
+        }
+
+        $result = file_put_contents($theoricPath, $fileContent);
+        if( $result === false ) throw new TelegramBotException('Write file error');
+
+        return $theoricPath;
     }
 
     /**
-     *
+     * TeleBotRequest destructor.
      */
     public function __destruct() {
         unset($this->bot);
