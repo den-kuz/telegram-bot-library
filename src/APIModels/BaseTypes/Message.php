@@ -178,6 +178,11 @@ class Message extends BaseModel
     public $forward_date;
 
     /**
+     * @var integer
+     */
+    public $edit_date;
+
+    /**
      * @var Message
      */
     public $reply_to_message;

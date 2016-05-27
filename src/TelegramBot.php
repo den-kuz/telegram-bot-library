@@ -390,8 +390,18 @@ class TelegramBot
     {
         return $this->lastUpdateID;
     }
-    
-    public function downloadFile($file_path, $save_dir, $save_name) {
-        return $this->request->downloadTelegramFile($file_path, $save_dir, $save_name);
+
+    /**
+     * Скачивает файл
+     * 
+     * @param $serverPath - путь на сервере
+     * @param $saveDir - папка сохранения
+     * @param null|string $saveName = имя файла для сохранения
+     * @param null|bool $hashedName = захешировать имя и контент файла
+     * 
+     * @return string
+     */
+    public function downloadFile($serverPath, $saveDir, $saveName = null, $hashedName = true) {
+        return $this->request->downloadTelegramFile($serverPath, $saveDir, $saveName, $hashedName);
     }
 }
