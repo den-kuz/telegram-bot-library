@@ -133,7 +133,7 @@ class TelegramBotRequest
         $realPathDir = realpath($dir);
 
         if( !is_dir($realPathDir) ) @mkdir($realPathDir, 0777, true);
-        if( !is_dir($realPathDir) ) throw new TelegramBotException('Save folder not found');
+        if( !is_dir($realPathDir) ) throw new TelegramRuntimeException('Save folder not found');
         if(
             (
                 is_null($filename) ||
@@ -159,15 +159,15 @@ class TelegramBotRequest
         $code = curl_getinfo($curlDescriptor, CURLINFO_HTTP_CODE);
         curl_close($curlDescriptor);
         
-        if($code !== 200)           throw new TelegramBotException('File not found');
-        if( empty($fileContent) )   throw new TelegramBotException('File is empty');
+        if($code !== 200)           throw new HttpException($code);
+        if( empty($fileContent) )   throw new TelegramRuntimeException('File is empty');
 
         if($saveHashed) {
             $theoricPath = realpath($realPathDir) . DIRECTORY_SEPARATOR . hash('md5', $fileContent . $filename);
         }
 
         $result = file_put_contents($theoricPath, $fileContent);
-        if( $result === false ) throw new TelegramBotException('Write file error');
+        if( $result === false ) throw new TelegramRuntimeException('Write file error');
 
         return $theoricPath;
     }
