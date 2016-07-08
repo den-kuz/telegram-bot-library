@@ -407,12 +407,14 @@ class TelegramBot
     }
 
     /**
-     * Устанавливает WebHook 
-     * 
+     * Устанавливает WebHook
+     *
      * @param SendWebhook $webhook
+     * @return array
      * @throws TelegramBotException
      */
     public function setWebhook(SendWebhook $webhook) {
-        $response = $this->request->query('setWebhook', $webhook->convertToQuery());
+        $response = $this->request->query('setWebhook', $webhook->convertToQuery(), true);
+        return $response;
     }
 }
