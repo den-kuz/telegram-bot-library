@@ -406,9 +406,13 @@ class TelegramBot
         return $this->request->downloadTelegramFile($serverPath, $saveDir, $saveName, $hashedName);
     }
 
+    /**
+     * Устанавливает WebHook 
+     * 
+     * @param SendWebhook $webhook
+     * @throws TelegramBotException
+     */
     public function setWebhook(SendWebhook $webhook) {
         $response = $this->request->query('setWebhook', $webhook->convertToQuery());
-
-        print_r($response);
     }
 }
