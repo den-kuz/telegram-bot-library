@@ -66,28 +66,36 @@ class TelegramBotRequest
 
         // CURL init
         // ---------------------------------------------------------------
-        $curlDescriptor = curl_init( $this->getAPIUrlByMethod($method) );
+        $curlDescriptor = curl_init($this->getAPIUrlByMethod($method));
         curl_setopt_array(
             $curlDescriptor,
             [
-                CURLOPT_POST => true,
+                CURLOPT_POST           => true,
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HTTPHEADER => ['Content-Type: ' . $contentType]
+                CURLOPT_HTTPHEADER     => ['Content-Type: ' . $contentType],
+                CURLOPT_FOLLOWLOCATION => 1,
+                CURLOPT_SSL_VERIFYPEER => 0
             ]
         );
 
-        if ( $postFields ) curl_setopt($curlDescriptor, CURLOPT_POSTFIELDS, $parameters);
+        if ($postFields) curl_setopt($curlDescriptor, CURLOPT_POSTFIELDS, $parameters);
         // ---------------------------------------------------------------
 
         $apiResponse = curl_exec($curlDescriptor);
+
         $apiResponse = json_decode($apiResponse, true);
         curl_close($curlDescriptor);
-        
-        if( !isset( $apiResponse['ok'] ) ) {
-            throw new TelegramBotException( 'Данные не получены', 1000 );
-        } elseif ( $apiResponse['ok'] == false ) {
-            throw new TelegramBotException( $apiResponse['description'], $apiResponse['error_code'] );
-        } elseif ( ($apiResponse['ok'] == true) && (isset($apiResponse['result'])) ) {
+
+        if(isset($apiResponse['description'])) {
+            // TODO: придумать что с этим делать
+            echo $apiResponse['description'] . PHP_EOL;
+        }
+
+        if (!isset($apiResponse['ok'])) {
+            throw new TelegramBotException('Данные не получены', 1000);
+        } elseif ($apiResponse['ok'] == false) {
+            throw new TelegramBotException($apiResponse['description'], $apiResponse['error_code']);
+        } elseif (($apiResponse['ok'] == true) && (isset($apiResponse['result']))) {
             return $apiResponse['result'];
         }
 
@@ -151,7 +159,9 @@ class TelegramBotRequest
             $curlDescriptor,
             [
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HEADER => 0
+                CURLOPT_HEADER => 0,
+                CURLOPT_FOLLOWLOCATION => 1,
+                CURLOPT_SSL_VERIFYPEER => 0
             ]
         );
         
