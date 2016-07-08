@@ -27,6 +27,7 @@ use TelegramBotLibrary\APIModels\SendModels\SendSticker;
 use TelegramBotLibrary\APIModels\SendModels\SendVenue;
 use TelegramBotLibrary\APIModels\SendModels\SendVideo;
 use TelegramBotLibrary\APIModels\SendModels\SendVoice;
+use TelegramBotLibrary\APIModels\SendModels\SendWebhook;
 use TelegramBotLibrary\Exceptions\TelegramBotException;
 
 class TelegramBot
@@ -403,5 +404,11 @@ class TelegramBot
      */
     public function downloadFile($serverPath, $saveDir, $saveName = null, $hashedName = true) {
         return $this->request->downloadTelegramFile($serverPath, $saveDir, $saveName, $hashedName);
+    }
+
+    public function setWebhook(SendWebhook $webhook) {
+        $response = $this->request->query('setWebhook', $webhook->convertToQuery());
+
+        print_r($response);
     }
 }
