@@ -90,12 +90,7 @@ class TelegramBotRequest
 
         $apiResponse = json_decode($apiResponse, true);
         curl_close($curlDescriptor);
-
-        if (isset($apiResponse['description'])) {
-            // TODO: придумать что с этим делать
-            echo $apiResponse['description'] . PHP_EOL;
-        }
-
+        
         if (!isset($apiResponse['ok'])) {
             throw new TelegramBotException('Данные не получены', 1000);
         } elseif ($apiResponse['ok'] == false) {
