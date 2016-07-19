@@ -14,129 +14,117 @@ use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
 class Message extends BaseModel
 {
     const TYPES = [
-        'from'                  => [
+        'from' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'User'
             ]
         ],
-        'chat'                  => [
+        'chat' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Chat'
             ]
         ],
-        'forward_from'          => [
+        'forward_from' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'User'
             ]
         ],
-        'forward_from_chat'     => [
+        'forward_from_chat' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Chat'
             ]
         ],
-        'reply_to_message'      => [
+        'reply_to_message' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Message'
             ]
         ],
-        'entities'              => [
+        'entities' => [
             'CreateWith' => [
-                'type'  => 'array',
+                'type' => 'array',
                 'class' => __NAMESPACE__ . '\\' . 'MessageEntity'
             ]
         ],
-        'audio'                 => [
+        'audio' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Audio'
             ]
         ],
-        'document'              => [
+        'document' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Document'
             ]
         ],
-        'photo'                 => [
+        'photo' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'array',
                 'class' => __NAMESPACE__ . '\\' . 'PhotoSize'
             ]
         ],
-        'sticker'               => [
+        'sticker' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Sticker'
             ]
         ],
-        'video'                 => [
+        'video' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Video'
             ]
         ],
-        'voice'                 => [
+        'voice' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Voice'
             ]
         ],
-        'contact'               => [
+        'contact' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Contact'
             ]
         ],
-        'location'              => [
+        'location' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Location'
             ]
         ],
-        'venue'                 => [
+        'venue' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Venue'
             ]
         ],
-        'new_chat_member'       => [
+        'new_chat_member' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'User'
             ]
         ],
-        'new_chat_participant'  => [
+        'left_chat_member' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'User'
             ]
         ],
-        'left_chat_member'      => [
+        'new_chat_photo' => [
             'CreateWith' => [
-                'type'  => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'User'
-            ]
-        ],
-        'left_chat_participant' => [
-            'CreateWith' => [
-                'type'  => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'User'
-            ]
-        ],
-        'new_chat_photo'        => [
-            'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'array',
                 'class' => __NAMESPACE__ . '\\' . 'PhotoSize'
             ]
         ],
-        'pinned_message'        => [
+        'pinned_message' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Message'
             ]
         ]
@@ -208,7 +196,7 @@ class Message extends BaseModel
     public $document;
 
     /**
-     * @var PhotoSize
+     * @var PhotoSize[]
      */
     public $photo;
 
@@ -238,7 +226,7 @@ class Message extends BaseModel
     public $contact;
 
     /**
-     * @var    Location
+     * @var Location
      */
     public $location;
 
@@ -300,7 +288,7 @@ class Message extends BaseModel
      */
     public $pinned_message;
 
-    
+
     /**
      * @param $type
      * @return MessageEntity[]
@@ -313,7 +301,7 @@ class Message extends BaseModel
                 if ($entity->type == $type) $entities[] = $entity;
             }
         }
-        
+
         return $entities;
     }
 }

@@ -13,16 +13,32 @@ use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
 
 class MessageEntity extends BaseModel
 {
+    const TYPES = [
+        'user' => [
+            'CreateWith' => [
+                'type' => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'User'
+            ]
+        ]
+    ];
+
     public $type;
     public $offset;
     public $length;
     public $url;
 
-    public function getEntityVal($text) {
+    /**
+     * @var User
+     */
+    public $user;
+
+    public function getEntityVal($text)
+    {
         return mb_substr($text, $this->offset, $this->length);
     }
 
-    public function getTextExcludeEntity($text) {
+    public function getTextExcludeEntity($text)
+    {
         return trim(mb_substr($text, $this->offset + $this->length, mb_strlen($text)));
     }
 }

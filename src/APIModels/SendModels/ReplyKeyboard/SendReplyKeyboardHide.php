@@ -8,7 +8,6 @@
 
 namespace TelegramBotLibrary\APIModels\SendModels\ReplyKeyboard;
 
-
 use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;
 
 class SendReplyKeyboardHide extends SendBaseModel
