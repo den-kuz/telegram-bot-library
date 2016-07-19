@@ -37,6 +37,13 @@ class MessageEntity extends BaseModel
         return mb_substr($text, $this->offset, $this->length);
     }
 
+    public function getCommand($text)
+    {
+        $val = $this->getEntityVal($text);
+        $splitCommand = explode('@', $val);
+        return (count($splitCommand) > 1) ? '/' . $val[1] : $val[0];
+    }
+
     public function getTextExcludeEntity($text)
     {
         return trim(mb_substr($text, $this->offset + $this->length, mb_strlen($text)));

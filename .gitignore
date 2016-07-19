@@ -1,4 +1,6 @@
 vendor
 .idea
+.git
+.hg
 MainLoop.php
 tests
