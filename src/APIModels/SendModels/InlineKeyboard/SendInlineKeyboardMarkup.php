@@ -14,4 +14,10 @@ use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;
 class SendInlineKeyboardMarkup extends SendBaseModel
 {
     public $inline_keyboard;
+
+    public function convertToQuery()
+    {
+        $arr = parent::convertToQuery();
+        return json_encode($arr);
+    }
 }
