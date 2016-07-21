@@ -8,7 +8,6 @@
 
 namespace TelegramBotLibrary\APIModels\BaseTypes;
 
-
 use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
 
 class Update extends BaseModel
@@ -16,15 +15,20 @@ class Update extends BaseModel
     const TYPES = [
         'message' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Message'
             ]
         ],
-
         'edited_message' => [
             'CreateWith' => [
-                'type'  => 'object',
+                'type' => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'Message'
+            ]
+        ],
+        'callback_query' => [
+            'CreateWith' => [
+                'type' => 'object',
+                'class' => __NAMESPACE__ . '\\' . 'CallbackQuery'
             ]
         ]
     ];
@@ -43,4 +47,9 @@ class Update extends BaseModel
      * @var Message
      */
     public $edited_message;
+
+    /**
+     * @var CallbackQuery
+     */
+    public $callback_query;
 }

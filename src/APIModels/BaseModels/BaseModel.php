@@ -38,7 +38,7 @@ abstract class BaseModel
         $typesConfiguration = (object)json_decode(json_encode( $this->getTypes() ));
 
         foreach ($config as $key => $val) {
-            // для этого поля массива есть конфиг в поле TYPES
+            // для этого поля массива есть конфиг в поле TYPES и используем маппер
             if( isset( $typesConfiguration->{$key} ) && $use_mapper === true ) {
                 $keyConfigSet = $typesConfiguration->{$key};
 
