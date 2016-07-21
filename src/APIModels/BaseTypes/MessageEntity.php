@@ -16,7 +16,7 @@ class MessageEntity extends BaseModel
     const TYPES = [
         'user' => [
             'CreateWith' => [
-                'type' => 'object',
+                'type'  => 'object',
                 'class' => __NAMESPACE__ . '\\' . 'User'
             ]
         ]
@@ -41,7 +41,8 @@ class MessageEntity extends BaseModel
     {
         $val = $this->getEntityVal($text);
         $splitCommand = explode('@', $val);
-        return (count($splitCommand) > 1) ? '/' . $val[1] : $val[0];
+
+        return $splitCommand[0];
     }
 
     public function getTextExcludeEntity($text)
