@@ -8,7 +8,6 @@
 
 namespace TelegramBotLibrary\APIModels\GetModels;
 
-
 use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
 
 class GetUserProfilePhotos extends BaseModel

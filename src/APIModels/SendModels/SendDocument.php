@@ -11,7 +11,7 @@ namespace TelegramBotLibrary\APIModels\SendModels;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendFileModel;
 
-class SendFileDocument extends BaseSendFileModel
+class SendDocument extends BaseSendFileModel
 {
     const TYPE = 'document';
 

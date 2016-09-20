@@ -4,7 +4,7 @@ namespace TelegramBotLibrary\APIModels\SendModels\ReplyKeyboard;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class ReplyKeyboardHideSend extends BaseSendModel
+class SendReplyKeyboardHide extends BaseSendModel
 {
     public $hide_keyboard = true;
 

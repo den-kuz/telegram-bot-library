@@ -16,40 +16,43 @@ use TelegramBotLibrary\APIModels\BaseTypes\Update;
 use TelegramBotLibrary\APIModels\BaseTypes\User;
 use TelegramBotLibrary\APIModels\BaseTypes\UserProfilePhotos;
 use TelegramBotLibrary\APIModels\GetModels\GetUserProfilePhotos;
-use TelegramBotLibrary\APIModels\SendModels\SendFileAudio;
+use TelegramBotLibrary\APIModels\SendModels\SendAudio;
 use TelegramBotLibrary\APIModels\SendModels\ContactSend;
-use TelegramBotLibrary\APIModels\SendModels\SendFileDocument;
-use TelegramBotLibrary\APIModels\SendModels\ForwardMessageSend;
-use TelegramBotLibrary\APIModels\SendModels\LocationSend;
-use TelegramBotLibrary\APIModels\SendModels\MesssageSend;
-use TelegramBotLibrary\APIModels\SendModels\SendFilePhoto;
-use TelegramBotLibrary\APIModels\SendModels\SendFileSticker;
-use TelegramBotLibrary\APIModels\SendModels\SendVenue;
-use TelegramBotLibrary\APIModels\SendModels\SendFileVideo;
-use TelegramBotLibrary\APIModels\SendModels\SendFileVoice;
-use TelegramBotLibrary\APIModels\SendModels\SendFileWebhook;
+use TelegramBotLibrary\APIModels\SendModels\SendDocument;
+use TelegramBotLibrary\APIModels\SendModels\SendForwardMessage;
+use TelegramBotLibrary\APIModels\SendModels\SendLocation;
+use TelegramBotLibrary\APIModels\SendModels\SendMesssage;
+use TelegramBotLibrary\APIModels\SendModels\SendPhoto;
+use TelegramBotLibrary\APIModels\SendModels\SendSticker;
+use TelegramBotLibrary\APIModels\SendModels\SendLocationVenue;
+use TelegramBotLibrary\APIModels\SendModels\SendVideo;
+use TelegramBotLibrary\APIModels\SendModels\SendVoice;
+use TelegramBotLibrary\APIModels\SendModels\SendWebhook;
 use TelegramBotLibrary\Exceptions\TelegramBotException;
 
 class TelegramBot
 {
     private $botToken;
+
     private $botUser;
+
     private $lastUpdateID = 0;
+
     private $request;
 
     /**
      * TelegramBot constructor.
      *
-     * @param $token - Токен бота
+     * @param      $token - Токен бота
      * @param bool $skipPrevUpdates - пропустить предыдущие обновления, если они есть
      */
-    public function __construct($token, $skipPrevUpdates = true)
+    public function __construct ( $token, $skipPrevUpdates = true )
     {
         $this->botToken = $token;
-        $this->request = new TelegramBotRequest($this);
+        $this->request = new TelegramBotRequest( $this );
 
         $this->botUser = $this->getMe();
-        if ($skipPrevUpdates) $this->skipUpdates();
+        if ( $skipPrevUpdates ) $this->skipUpdates();
     }
 
     // <editor-fold defaultstate="collapsed" desc="Работа с обновлениями">
@@ -60,19 +63,20 @@ class TelegramBot
      *
      * @param int $limit - количество получаемых апдейтов от 1 до 100
      * @param int $offset - ID апдейта, начиная с которого получать
+     *
      * @return Update[]
      * @throws TelegramBotException
      */
-    public function getUpdates($limit = 100, $offset = 0)
+    public function getUpdates ( $limit = 100, $offset = 0 )
     {
-        $updates = $this->request->query('getUpdates', ['limit' => $limit, 'offset' => $offset]);
+        $updates = $this->request->query( 'getUpdates', [ 'limit' => $limit, 'offset' => $offset ] );
 
         $updatesArray = [];
-        if (!empty($updates)) {
-            foreach ($updates as $update) $updatesArray[] = new Update($update);
+        if ( !empty( $updates ) ) {
+            foreach ( $updates as $update ) $updatesArray[] = new Update( $update );
 
-            $lastUpdate = new Update(end($updates));
-            $this->lastUpdateID = isset($lastUpdate->update_id) ? $lastUpdate->update_id : 0;
+            $lastUpdate = new Update( end( $updates ) );
+            $this->lastUpdateID = isset( $lastUpdate->update_id ) ? $lastUpdate->update_id : 0;
         }
 
         return $updatesArray;
@@ -84,16 +88,16 @@ class TelegramBot
      *
      * @param null $specific_id
      */
-    protected function skipUpdates($specific_id = null)
+    protected function skipUpdates ( $specific_id = null )
     {
-        if ($specific_id === null) {
-            $lastUpdate = $this->getUpdates(1, -1);
-            $latestId = isset($lastUpdate[0]->update_id) ? $lastUpdate[0]->update_id : 0;
+        if ( $specific_id === null ) {
+            $lastUpdate = $this->getUpdates( 1, -1 );
+            $latestId = isset( $lastUpdate[ 0 ]->update_id ) ? $lastUpdate[ 0 ]->update_id : 0;
         } else {
             $latestId = $specific_id;
         }
 
-        $this->getUpdates(1, (int)$latestId + 1);
+        $this->getUpdates( 1, (int)$latestId + 1 );
         $this->lastUpdateID = $latestId;
     }
 
@@ -101,11 +105,12 @@ class TelegramBot
      * Получает последние обновления, максимум 100
      *
      * @param int $limit - количество получаемых обновлений
+     *
      * @return Update[]
      */
-    public function getLastUpdates($limit = 100)
+    public function getLastUpdates ( $limit = 100 )
     {
-        return $this->getUpdates($limit, (int)$this->lastUpdateID + 1);
+        return $this->getUpdates( $limit, (int)$this->lastUpdateID + 1 );
     }
 
     // </editor-fold>
@@ -115,148 +120,151 @@ class TelegramBot
     /**
      * Отправляет сообщение
      *
-     * @param MesssageSend $message
+     * @param SendMesssage $message
      *
-*@return Message
+     * @return Message
      * @throws TelegramBotException
      */
-    public function sendMessage ( MesssageSend $message)
+    public function sendMessage ( SendMesssage $message )
     {
-        $response = $this->request->query('sendMessage', $message->toArray());
+        $response = $this->request->query( 'sendMessage', $message->toArray() );
 
-        return new Message($response);
+        return new Message( $response );
     }
 
     /**
      * Переотправляет (цитирует) сообщение
      *
-     * @param ForwardMessageSend $forwardMessageModel
+     * @param SendForwardMessage $forwardMessageModel
      *
-*@return Message
+     * @return Message
      * @throws TelegramBotException
      */
-    public function forwardMessage ( ForwardMessageSend $forwardMessageModel)
+    public function forwardMessage ( SendForwardMessage $forwardMessageModel )
     {
-        $response = $this->request->query('forwardMessage', $forwardMessageModel->toArray());
-        return new Message($response);
+        $response = $this->request->query( 'forwardMessage', $forwardMessageModel->toArray() );
+
+        return new Message( $response );
     }
 
     /**
      * Отправляет фото
      *
-     * @param SendFilePhoto $photo
+     * @param SendPhoto $photo
      *
-*@return Message
+     * @return Message
      * @throws TelegramBotException
      */
-    public function sendPhoto ( SendFilePhoto $photo)
+    public function sendPhoto ( SendPhoto $photo )
     {
-        $response = $this->request->query('sendPhoto', $photo->toArray());
-        return new Message($response);
+        $response = $this->request->query( 'sendPhoto', $photo->toArray() );
+
+        return new Message( $response );
     }
 
     /**
      * Отправляет аудио файл
      *
-     * @param SendFileAudio $audio
+     * @param SendAudio $audio
      *
-*@return Message
+     * @return Message
      * @throws TelegramBotException
      */
-    public function sendAudio ( SendFileAudio $audio)
+    public function sendAudio ( SendAudio $audio )
     {
-        $response = $this->request->query('sendAudio', $audio->toArray());
+        $response = $this->request->query( 'sendAudio', $audio->toArray() );
 
-        return new Message($response);
+        return new Message( $response );
     }
 
     /**
      * Отправляет документ
      *
-     * @param SendFileDocument $document
+     * @param SendDocument $document
      *
-*@return Message
+     * @return Message
      * @throws TelegramBotException
      */
-    public function sendDocument ( SendFileDocument $document)
+    public function sendDocument ( SendDocument $document )
     {
-        $response = $this->request->query('sendDocument', $document->toArray());
+        $response = $this->request->query( 'sendDocument', $document->toArray() );
 
-        return new Message($response);
+        return new Message( $response );
     }
 
     /**
      * Отправляет стикер в формате .webm
      *
-     * @param SendFileSticker $sticker
+     * @param SendSticker $sticker
      *
-*@return Message
+     * @return Message
      * @throws TelegramBotException
      */
-    public function sendSticker ( SendFileSticker $sticker)
+    public function sendSticker ( SendSticker $sticker )
     {
-        $response = $this->request->query('sendSticker', $sticker->toArray());
+        $response = $this->request->query( 'sendSticker', $sticker->toArray() );
 
-        return new Message($response);
+        return new Message( $response );
     }
 
     /**
      * Отправляет видео в формате .mp4
      *
-     * @param SendFileVideo $video
+     * @param SendVideo $video
      *
-*@return Message
+     * @return Message
      * @throws TelegramBotException
      */
-    public function sendVideo ( SendFileVideo $video)
+    public function sendVideo ( SendVideo $video )
     {
-        $response = $this->request->query('sendVideo', $video->toArray());
+        $response = $this->request->query( 'sendVideo', $video->toArray() );
 
-        return new Message($response);
+        return new Message( $response );
     }
 
     /**
      * Отправляет голосовое сообщение в формате .ogg и кодеком OPUS
      *
-     * @param SendFileVoice $voice
+     * @param SendVoice $voice
      *
-*@return Message
+     * @return Message
      * @throws TelegramBotException
      */
-    public function sendVoice ( SendFileVoice $voice)
+    public function sendVoice ( SendVoice $voice )
     {
-        $response = $this->request->query('sendVoice', $voice->toArray());
+        $response = $this->request->query( 'sendVoice', $voice->toArray() );
 
-        return new Message($response);
+        return new Message( $response );
     }
 
     /**
      * Отправить позицию
      *
-     * @param LocationSend $location
+     * @param SendLocation $location
      *
-*@return Message
+     * @return Message
      * @throws TelegramBotException
      */
-    public function sendLocation ( LocationSend $location)
+    public function sendLocation ( SendLocation $location )
     {
-        $response = $this->request->query('sendLocation', $location->toArray());
+        $response = $this->request->query( 'sendLocation', $location->toArray() );
 
-        return new Message($response);
+        return new Message( $response );
     }
 
     /**
      * Отправить веню - позицию с описанием и названием
      *
-     * @param SendVenue $venue
+     * @param SendLocationVenue $venue
+     *
      * @return Message
      * @throws TelegramBotException
      */
-    public function sendVenue(SendVenue $venue)
+    public function sendVenue ( SendLocationVenue $venue )
     {
-        $response = $this->request->query('sendVenue', $venue->toArray());
+        $response = $this->request->query( 'sendVenue', $venue->toArray() );
 
-        return new Message($response);
+        return new Message( $response );
     }
 
     /**
@@ -264,14 +272,14 @@ class TelegramBot
      *
      * @param ContactSend $contact
      *
-*@return Message
+     * @return Message
      * @throws TelegramBotException
      */
-    public function sendContact ( ContactSend $contact)
+    public function sendContact ( ContactSend $contact )
     {
-        $response = $this->request->query('sendContact', $contact->toArray());
+        $response = $this->request->query( 'sendContact', $contact->toArray() );
 
-        return new Message($response);
+        return new Message( $response );
     }
 
     /**
@@ -279,12 +287,13 @@ class TelegramBot
      *
      * @param $chat_id
      * @param $action
+     *
      * @return bool
      * @throws TelegramBotException
      */
-    public function sendChatAction($chat_id, $action)
+    public function sendChatAction ( $chat_id, $action )
     {
-        $response = $this->request->query('sendChatAction', ['chat_id' => $chat_id, 'action' => $action]);
+        $response = $this->request->query( 'sendChatAction', [ 'chat_id' => $chat_id, 'action' => $action ] );
 
         return $response;
     }
@@ -298,59 +307,64 @@ class TelegramBot
      * @return User
      * @throws TelegramBotException
      */
-    public function getMe()
+    public function getMe ()
     {
-        if (!$this->botUser) {
-            $getMeResult = $this->request->query('getMe');
-            $this->botUser = new User($getMeResult);
+        if ( !$this->botUser ) {
+            $getMeResult = $this->request->query( 'getMe' );
+            $this->botUser = new User( $getMeResult );
         }
+
         return $this->botUser;
     }
 
     /**
      * Получает фотографии профиля пользователя. Каждая фотография в 4-х размерах
      *
-     * @param $user_id
+     * @param      $user_id
      * @param null $offset
      * @param null $limit
+     *
      * @throws TelegramBotException
      * @return UserProfilePhotos
      */
-    public function getUserProfilePhotos($user_id, $offset = null, $limit = null)
+    public function getUserProfilePhotos ( $user_id, $offset = null, $limit = null )
     {
-        $GetUserPhoto = new GetUserProfilePhotos(['user_id' => $user_id, 'offset' => $offset, 'limit' => $limit]);
-        $response = $this->request->query('getUserProfilePhotos', $GetUserPhoto->toArray());
+        $GetUserPhoto = new GetUserProfilePhotos( [ 'user_id' => $user_id, 'offset' => $offset, 'limit' => $limit ] );
+        $response = $this->request->query( 'getUserProfilePhotos', $GetUserPhoto->toArray() );
 
-        return new UserProfilePhotos($response);
+        return new UserProfilePhotos( $response );
     }
 
     /**
      * Получает информацию о файле по его ID
      *
      * @param $file_id
+     *
      * @return File
      * @throws TelegramBotException
      */
-    public function getFile($file_id)
+    public function getFile ( $file_id )
     {
-        $response = $this->request->query('getFile', ['file_id' => $file_id]);
+        $response = $this->request->query( 'getFile', [ 'file_id' => $file_id ] );
 
-        return new File($response);
+        return new File( $response );
     }
 
     /**
      * Получает список администраторов чата
      *
      * @param $chat_id
+     *
      * @return ChatMember[]
      * @throws TelegramBotException
      */
-    public function getChatAdministrators($chat_id)
+    public function getChatAdministrators ( $chat_id )
     {
-        $response = $this->request->query('getChatAdministrators', ['chat_id' => $chat_id]);
+        $response = $this->request->query( 'getChatAdministrators', [ 'chat_id' => $chat_id ] );
 
         $members = [];
-        foreach ($response as $member) $members[] = new ChatMember($member);
+        foreach ( $response as $member ) $members[] = new ChatMember( $member );
+
         return $members;
     }
 
@@ -358,26 +372,28 @@ class TelegramBot
      * Получает информацию о чате по ID
      *
      * @param $chat_id - ID чата
+     *
      * @return Chat
      * @throws TelegramBotException
      */
-    public function getChat($chat_id)
+    public function getChat ( $chat_id )
     {
-        $response = $this->request->query('getChat', ['chat_id' => $chat_id]);
+        $response = $this->request->query( 'getChat', [ 'chat_id' => $chat_id ] );
 
-        return new Chat($response);
+        return new Chat( $response );
     }
 
     /**
      * Вовзращает количество участников чата
      *
      * @param $chat_id - ID чата
+     *
      * @return int
      * @throws TelegramBotException
      */
-    public function getChatMembersCount($chat_id)
+    public function getChatMembersCount ( $chat_id )
     {
-        $response = $this->request->query('getChatMembersCount', ['chat_id' => $chat_id]);
+        $response = $this->request->query( 'getChatMembersCount', [ 'chat_id' => $chat_id ] );
 
         return $response;
     }
@@ -387,33 +403,37 @@ class TelegramBot
      *
      * @param $chat_id - ID чата
      * @param $user_id - ID юзера
+     *
      * @return ChatMember
      * @throws TelegramBotException
      */
-    public function getChatMember($chat_id, $user_id)
+    public function getChatMember ( $chat_id, $user_id )
     {
-        $response = $this->request->query('getChatMembersCount', ['chat_id' => $chat_id, 'user_id' => $user_id]);
+        $response = $this->request->query( 'getChatMembersCount', [ 'chat_id' => $chat_id, 'user_id' => $user_id ] );
 
-        return new ChatMember($response);
+        return new ChatMember( $response );
     }
 
     // </editor-fold>
 
-    public function kickChatMember($chat_id, $user_id)
+    public function kickChatMember ( $chat_id, $user_id )
     {
-        $response = $this->request->query('kickChatMember', ['chat_id' => $chat_id, 'user_id' => $user_id]);
+        $response = $this->request->query( 'kickChatMember', [ 'chat_id' => $chat_id, 'user_id' => $user_id ] );
+
         return $response;
     }
 
-    public function leaveChat($chat_id)
+    public function leaveChat ( $chat_id )
     {
-        $response = $this->request->query('leaveChat', ['chat_id' => $chat_id]);
+        $response = $this->request->query( 'leaveChat', [ 'chat_id' => $chat_id ] );
+
         return $response;
     }
 
-    public function unbanChatMember($chat_id, $user_id)
+    public function unbanChatMember ( $chat_id, $user_id )
     {
-        $response = $this->request->query('unbanChatMember', ['chat_id' => $chat_id, 'user_id' => $user_id]);
+        $response = $this->request->query( 'unbanChatMember', [ 'chat_id' => $chat_id, 'user_id' => $user_id ] );
+
         return $response;
     }
 
@@ -422,7 +442,7 @@ class TelegramBot
      *
      * @return string
      */
-    public function getBotToken()
+    public function getBotToken ()
     {
         return $this->botToken;
     }
@@ -432,7 +452,7 @@ class TelegramBot
      *
      * @return int
      */
-    public function getLastUpdateID()
+    public function getLastUpdateID ()
     {
         return $this->lastUpdateID;
     }
@@ -440,29 +460,30 @@ class TelegramBot
     /**
      * Скачивает файл
      *
-     * @param $serverPath - путь на сервере
-     * @param $saveDir - папка сохранения
+     * @param             $serverPath - путь на сервере
+     * @param             $saveDir - папка сохранения
      * @param null|string $saveName = имя файла для сохранения
-     * @param null|bool $hashedName = захешировать имя и контент файла
+     * @param null|bool   $hashedName = захешировать имя и контент файла
      *
      * @return string
      */
-    public function downloadFile($serverPath, $saveDir, $saveName = null, $hashedName = true)
+    public function downloadFile ( $serverPath, $saveDir, $saveName = null, $hashedName = true )
     {
-        return $this->request->downloadTelegramFile($serverPath, $saveDir, $saveName, $hashedName);
+        return $this->request->downloadTelegramFile( $serverPath, $saveDir, $saveName, $hashedName );
     }
 
     /**
      * Устанавливает WebHook
      *
-     * @param SendFileWebhook $webhook
+     * @param SendWebhook $webhook
      *
-*@return array
+     * @return array
      * @throws TelegramBotException
      */
-    public function setWebhook ( SendFileWebhook $webhook)
+    public function setWebhook ( SendWebhook $webhook )
     {
-        $response = $this->request->query('setWebhook', $webhook->toArray(), true);
+        $response = $this->request->query( 'setWebhook', $webhook->toArray(), true );
+
         return $response;
     }
 }

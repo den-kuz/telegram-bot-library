@@ -10,7 +10,7 @@ namespace TelegramBotLibrary\APIModels\SendModels;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendFileModel;
 
-class SendFileAudio extends BaseSendFileModel
+class SendAudio extends BaseSendFileModel
 {
     const TYPE = 'audio';
     

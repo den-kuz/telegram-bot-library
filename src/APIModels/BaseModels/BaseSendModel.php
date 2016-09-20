@@ -11,6 +11,8 @@ namespace TelegramBotLibrary\APIModels\BaseModels;
 abstract class BaseSendModel extends BaseModel
 {
     public $disable_notification;
+
     public $reply_to_message_id;
+
     public $reply_markup;
 }

@@ -6,7 +6,6 @@ use ReflectionClass;
 
 abstract class BaseEnum
 {
-
     public static function getConstList ( $firstPosFilter = null )
     {
         $reflect = new ReflectionClass( static::class );

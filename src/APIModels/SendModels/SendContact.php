@@ -8,7 +8,6 @@
 
 namespace TelegramBotLibrary\APIModels\SendModels;
 
-
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
 class ContactSend extends BaseSendModel

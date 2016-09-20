@@ -11,7 +11,7 @@ namespace TelegramBotLibrary\APIModels\SendModels;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class ForwardMessageSend extends BaseSendModel
+class SendForwardMessage extends BaseSendModel
 {
     public $chat_id;
     public $from_chat_id;

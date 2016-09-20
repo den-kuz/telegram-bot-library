@@ -10,7 +10,7 @@ namespace TelegramBotLibrary\APIModels\SendModels\ReplyKeyboard;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class KeyboardButtonSend extends BaseSendModel
+class SendKeyboardButton extends BaseSendModel
 {
     public $text;
     public $request_contact;

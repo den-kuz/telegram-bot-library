@@ -10,7 +10,7 @@ namespace TelegramBotLibrary\APIModels\SendModels\ReplyKeyboard;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class ForceReplySend extends BaseSendModel
+class SendForceReply extends BaseSendModel
 {
     public $force_reply = true;
 

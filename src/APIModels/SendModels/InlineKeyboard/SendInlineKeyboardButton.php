@@ -11,7 +11,7 @@ namespace TelegramBotLibrary\APIModels\SendModels\InlineKeyboard;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class InlineKeyboardButtonSend extends BaseSendModel
+class SendInlineKeyboardButton extends BaseSendModel
 {
     public $text;
     public $url;

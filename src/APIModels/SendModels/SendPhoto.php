@@ -10,7 +10,7 @@ namespace TelegramBotLibrary\APIModels\SendModels;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendFileModel;
 
-class SendFilePhoto extends BaseSendFileModel
+class SendPhoto extends BaseSendFileModel
 {
     const TYPE = 'photo'; 
     

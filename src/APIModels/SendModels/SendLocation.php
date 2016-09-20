@@ -10,7 +10,7 @@ namespace TelegramBotLibrary\APIModels\SendModels;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class LocationSend extends BaseSendModel
+class SendLocation extends BaseSendModel
 {
     public $chat_id;
     public $latitude;

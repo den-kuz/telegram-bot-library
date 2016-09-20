@@ -11,7 +11,7 @@ namespace TelegramBotLibrary\APIModels\SendModels;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendFileModel;
 
-class SendFileWebhook extends BaseSendFileModel
+class SendWebhook extends BaseSendFileModel
 {
     const TYPE = 'certificate';
 

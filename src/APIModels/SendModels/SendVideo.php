@@ -8,10 +8,9 @@
 
 namespace TelegramBotLibrary\APIModels\SendModels;
 
-
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendFileModel;
 
-class SendFileVideo extends BaseSendFileModel
+class SendVideo extends BaseSendFileModel
 {
     const TYPE = 'video';
     

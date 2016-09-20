@@ -13,8 +13,8 @@ use TelegramBotLibrary\APIModels\BaseModels\BaseEnum;
 
 class ChatTypes extends BaseEnum
 {
-    const TYPE_PRIVATE = 'private';
-    const TYPE_GROUP = 'group';
-    const TYPE_SUPERGROUP = 'supergroup';
-    const TYPE_CHANNEL = 'channel';
+    const PRIVATE = 'private';
+    const GROUP = 'group';
+    const SUPERGROUP = 'supergroup';
+    const CHANNEL = 'channel';
 }

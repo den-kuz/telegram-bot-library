@@ -11,7 +11,7 @@ namespace TelegramBotLibrary\APIModels\SendModels\ReplyKeyboard;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class ReplyKeyboardMarkupSend extends BaseSendModel
+class SendReplyKeyboardMarkup extends BaseSendModel
 {
     public $keyboard;
 
