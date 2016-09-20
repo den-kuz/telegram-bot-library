@@ -102,7 +102,7 @@ class TelegramBotRequest
         if ( !isset( $apiResponse[ 'ok' ] ) ) {
             throw new HttpException( 'Data not received', 1000 );
         } elseif ( $apiResponse[ 'ok' ] == false ) {
-            throw new TelegramBotException( $apiResponse[ 'description' ], $apiResponse[ 'error_code' ] );
+            throw new TelegramRuntimeException( $apiResponse[ 'description' ], $apiResponse[ 'error_code' ] );
         } elseif ( ( $apiResponse[ 'ok' ] == true ) && ( isset( $apiResponse[ 'result' ] ) ) ) {
             if ( isset( $apiResponse[ 'description' ] ) && $getDescription ) {
                 return [

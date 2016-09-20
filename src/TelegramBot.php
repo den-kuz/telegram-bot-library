@@ -17,14 +17,14 @@ use TelegramBotLibrary\APIModels\BaseTypes\User;
 use TelegramBotLibrary\APIModels\BaseTypes\UserProfilePhotos;
 use TelegramBotLibrary\APIModels\GetModels\GetUserProfilePhotos;
 use TelegramBotLibrary\APIModels\SendModels\SendAudio;
-use TelegramBotLibrary\APIModels\SendModels\ContactSend;
+use TelegramBotLibrary\APIModels\SendModels\SendContact;
 use TelegramBotLibrary\APIModels\SendModels\SendDocument;
 use TelegramBotLibrary\APIModels\SendModels\SendForwardMessage;
 use TelegramBotLibrary\APIModels\SendModels\SendLocation;
 use TelegramBotLibrary\APIModels\SendModels\SendMesssage;
 use TelegramBotLibrary\APIModels\SendModels\SendPhoto;
 use TelegramBotLibrary\APIModels\SendModels\SendSticker;
-use TelegramBotLibrary\APIModels\SendModels\SendLocationVenue;
+use TelegramBotLibrary\APIModels\SendModels\SendVenue;
 use TelegramBotLibrary\APIModels\SendModels\SendVideo;
 use TelegramBotLibrary\APIModels\SendModels\SendVoice;
 use TelegramBotLibrary\APIModels\SendModels\SendWebhook;
@@ -65,7 +65,6 @@ class TelegramBot
      * @param int $offset - ID апдейта, начиная с которого получать
      *
      * @return Update[]
-     * @throws TelegramBotException
      */
     public function getUpdates ( $limit = 100, $offset = 0 )
     {
@@ -123,7 +122,6 @@ class TelegramBot
      * @param SendMesssage $message
      *
      * @return Message
-     * @throws TelegramBotException
      */
     public function sendMessage ( SendMesssage $message )
     {
@@ -138,7 +136,6 @@ class TelegramBot
      * @param SendForwardMessage $forwardMessageModel
      *
      * @return Message
-     * @throws TelegramBotException
      */
     public function forwardMessage ( SendForwardMessage $forwardMessageModel )
     {
@@ -153,7 +150,6 @@ class TelegramBot
      * @param SendPhoto $photo
      *
      * @return Message
-     * @throws TelegramBotException
      */
     public function sendPhoto ( SendPhoto $photo )
     {
@@ -168,7 +164,6 @@ class TelegramBot
      * @param SendAudio $audio
      *
      * @return Message
-     * @throws TelegramBotException
      */
     public function sendAudio ( SendAudio $audio )
     {
@@ -183,7 +178,6 @@ class TelegramBot
      * @param SendDocument $document
      *
      * @return Message
-     * @throws TelegramBotException
      */
     public function sendDocument ( SendDocument $document )
     {
@@ -198,7 +192,6 @@ class TelegramBot
      * @param SendSticker $sticker
      *
      * @return Message
-     * @throws TelegramBotException
      */
     public function sendSticker ( SendSticker $sticker )
     {
@@ -213,7 +206,6 @@ class TelegramBot
      * @param SendVideo $video
      *
      * @return Message
-     * @throws TelegramBotException
      */
     public function sendVideo ( SendVideo $video )
     {
@@ -228,7 +220,6 @@ class TelegramBot
      * @param SendVoice $voice
      *
      * @return Message
-     * @throws TelegramBotException
      */
     public function sendVoice ( SendVoice $voice )
     {
@@ -243,7 +234,6 @@ class TelegramBot
      * @param SendLocation $location
      *
      * @return Message
-     * @throws TelegramBotException
      */
     public function sendLocation ( SendLocation $location )
     {
@@ -255,12 +245,11 @@ class TelegramBot
     /**
      * Отправить веню - позицию с описанием и названием
      *
-     * @param SendLocationVenue $venue
+     * @param SendVenue $venue
      *
      * @return Message
-     * @throws TelegramBotException
      */
-    public function sendVenue ( SendLocationVenue $venue )
+    public function sendVenue ( SendVenue $venue )
     {
         $response = $this->request->query( 'sendVenue', $venue->toArray() );
 
@@ -270,12 +259,11 @@ class TelegramBot
     /**
      * Отправляет контакт
      *
-     * @param ContactSend $contact
+     * @param SendContact $contact
      *
      * @return Message
-     * @throws TelegramBotException
      */
-    public function sendContact ( ContactSend $contact )
+    public function sendContact ( SendContact $contact )
     {
         $response = $this->request->query( 'sendContact', $contact->toArray() );
 
@@ -289,7 +277,6 @@ class TelegramBot
      * @param $action
      *
      * @return bool
-     * @throws TelegramBotException
      */
     public function sendChatAction ( $chat_id, $action )
     {
@@ -297,6 +284,7 @@ class TelegramBot
 
         return $response;
     }
+
     // </editor-fold>
 
     // <editor-fold desc="Получение данных (исключая обновления)">
@@ -305,7 +293,6 @@ class TelegramBot
      * Возвращает информацию о боте в классе User
      *
      * @return User
-     * @throws TelegramBotException
      */
     public function getMe ()
     {
@@ -324,7 +311,6 @@ class TelegramBot
      * @param null $offset
      * @param null $limit
      *
-     * @throws TelegramBotException
      * @return UserProfilePhotos
      */
     public function getUserProfilePhotos ( $user_id, $offset = null, $limit = null )
@@ -341,7 +327,6 @@ class TelegramBot
      * @param $file_id
      *
      * @return File
-     * @throws TelegramBotException
      */
     public function getFile ( $file_id )
     {
@@ -356,7 +341,6 @@ class TelegramBot
      * @param $chat_id
      *
      * @return ChatMember[]
-     * @throws TelegramBotException
      */
     public function getChatAdministrators ( $chat_id )
     {
@@ -374,7 +358,6 @@ class TelegramBot
      * @param $chat_id - ID чата
      *
      * @return Chat
-     * @throws TelegramBotException
      */
     public function getChat ( $chat_id )
     {
@@ -389,7 +372,6 @@ class TelegramBot
      * @param $chat_id - ID чата
      *
      * @return int
-     * @throws TelegramBotException
      */
     public function getChatMembersCount ( $chat_id )
     {
@@ -405,7 +387,6 @@ class TelegramBot
      * @param $user_id - ID юзера
      *
      * @return ChatMember
-     * @throws TelegramBotException
      */
     public function getChatMember ( $chat_id, $user_id )
     {
@@ -415,6 +396,8 @@ class TelegramBot
     }
 
     // </editor-fold>
+
+    // <editor-fold desc="Действия">
 
     public function kickChatMember ( $chat_id, $user_id )
     {
@@ -436,6 +419,8 @@ class TelegramBot
 
         return $response;
     }
+
+    // </editor-fold>
 
     /**
      * Получить токен бота

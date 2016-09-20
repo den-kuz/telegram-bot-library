@@ -8,7 +8,7 @@
 
 namespace TelegramBotLibrary\APIModels\SendModels;
 
-class SendLocationVenue extends SendLocation
+class SendVenue extends SendLocation
 {
     public $title;
     public $address;

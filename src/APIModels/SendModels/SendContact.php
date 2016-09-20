@@ -10,7 +10,7 @@ namespace TelegramBotLibrary\APIModels\SendModels;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class ContactSend extends BaseSendModel
+class SendContact extends BaseSendModel
 {
     public $chat_id;
     public $phone_number;
