@@ -69,7 +69,7 @@ abstract class BaseModel
         foreach ( $data as $dataKey => $dataValue ) {
             // Если для этого поля массива есть конфиг
             if ( isset( $createWithConfiguration[ $dataKey ] ) ) {
-                $this->prepareFieldToMap( $dataValue, $createWithConfiguration[ $dataKey ] );
+                $this->{$dataKey} = $this->prepareFieldToMap( $dataValue, $createWithConfiguration[ $dataKey ] );
             } else {
                 $this->{$dataKey} = $dataValue;
             }
