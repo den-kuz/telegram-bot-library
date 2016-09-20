@@ -9,12 +9,17 @@
 namespace TelegramBotLibrary\APIModels\SendModels;
 
 
-use TelegramBotLibrary\APIModels\BaseModels\SendFileBaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\BaseSendFileModel;
 
-class SendSticker extends SendFileBaseModel
+class SendFileSticker extends BaseSendFileModel
 {
     const TYPE = 'sticker';
     
     public $chat_id;
     public $sticker;
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
+    }
 }

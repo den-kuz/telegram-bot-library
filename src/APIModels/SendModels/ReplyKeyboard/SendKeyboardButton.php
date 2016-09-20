@@ -8,11 +8,16 @@
 
 namespace TelegramBotLibrary\APIModels\SendModels\ReplyKeyboard;
 
-use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class SendKeyboardButton extends SendBaseModel
+class KeyboardButtonSend extends BaseSendModel
 {
     public $text;
     public $request_contact;
     public $request_location;
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
+    }
 }

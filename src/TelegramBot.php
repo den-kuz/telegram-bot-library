@@ -16,18 +16,18 @@ use TelegramBotLibrary\APIModels\BaseTypes\Update;
 use TelegramBotLibrary\APIModels\BaseTypes\User;
 use TelegramBotLibrary\APIModels\BaseTypes\UserProfilePhotos;
 use TelegramBotLibrary\APIModels\GetModels\GetUserProfilePhotos;
-use TelegramBotLibrary\APIModels\SendModels\SendAudio;
-use TelegramBotLibrary\APIModels\SendModels\SendContact;
-use TelegramBotLibrary\APIModels\SendModels\SendDocument;
-use TelegramBotLibrary\APIModels\SendModels\SendForwardMessage;
-use TelegramBotLibrary\APIModels\SendModels\SendLocation;
-use TelegramBotLibrary\APIModels\SendModels\SendMesssage;
-use TelegramBotLibrary\APIModels\SendModels\SendPhoto;
-use TelegramBotLibrary\APIModels\SendModels\SendSticker;
+use TelegramBotLibrary\APIModels\SendModels\SendFileAudio;
+use TelegramBotLibrary\APIModels\SendModels\ContactSend;
+use TelegramBotLibrary\APIModels\SendModels\SendFileDocument;
+use TelegramBotLibrary\APIModels\SendModels\ForwardMessageSend;
+use TelegramBotLibrary\APIModels\SendModels\LocationSend;
+use TelegramBotLibrary\APIModels\SendModels\MesssageSend;
+use TelegramBotLibrary\APIModels\SendModels\SendFilePhoto;
+use TelegramBotLibrary\APIModels\SendModels\SendFileSticker;
 use TelegramBotLibrary\APIModels\SendModels\SendVenue;
-use TelegramBotLibrary\APIModels\SendModels\SendVideo;
-use TelegramBotLibrary\APIModels\SendModels\SendVoice;
-use TelegramBotLibrary\APIModels\SendModels\SendWebhook;
+use TelegramBotLibrary\APIModels\SendModels\SendFileVideo;
+use TelegramBotLibrary\APIModels\SendModels\SendFileVoice;
+use TelegramBotLibrary\APIModels\SendModels\SendFileWebhook;
 use TelegramBotLibrary\Exceptions\TelegramBotException;
 
 class TelegramBot
@@ -115,13 +115,14 @@ class TelegramBot
     /**
      * Отправляет сообщение
      *
-     * @param SendMesssage $message
-     * @return Message
+     * @param MesssageSend $message
+     *
+*@return Message
      * @throws TelegramBotException
      */
-    public function sendMessage(SendMesssage $message)
+    public function sendMessage ( MesssageSend $message)
     {
-        $response = $this->request->query('sendMessage', $message->convertToQuery());
+        $response = $this->request->query('sendMessage', $message->toArray());
 
         return new Message($response);
     }
@@ -129,39 +130,42 @@ class TelegramBot
     /**
      * Переотправляет (цитирует) сообщение
      *
-     * @param SendForwardMessage $forwardMessageModel
-     * @return Message
+     * @param ForwardMessageSend $forwardMessageModel
+     *
+*@return Message
      * @throws TelegramBotException
      */
-    public function forwardMessage(SendForwardMessage $forwardMessageModel)
+    public function forwardMessage ( ForwardMessageSend $forwardMessageModel)
     {
-        $response = $this->request->query('forwardMessage', $forwardMessageModel->convertToQuery());
+        $response = $this->request->query('forwardMessage', $forwardMessageModel->toArray());
         return new Message($response);
     }
 
     /**
      * Отправляет фото
      *
-     * @param SendPhoto $photo
-     * @return Message
+     * @param SendFilePhoto $photo
+     *
+*@return Message
      * @throws TelegramBotException
      */
-    public function sendPhoto(SendPhoto $photo)
+    public function sendPhoto ( SendFilePhoto $photo)
     {
-        $response = $this->request->query('sendPhoto', $photo->convertToQuery());
+        $response = $this->request->query('sendPhoto', $photo->toArray());
         return new Message($response);
     }
 
     /**
      * Отправляет аудио файл
      *
-     * @param SendAudio $audio
-     * @return Message
+     * @param SendFileAudio $audio
+     *
+*@return Message
      * @throws TelegramBotException
      */
-    public function sendAudio(SendAudio $audio)
+    public function sendAudio ( SendFileAudio $audio)
     {
-        $response = $this->request->query('sendAudio', $audio->convertToQuery());
+        $response = $this->request->query('sendAudio', $audio->toArray());
 
         return new Message($response);
     }
@@ -169,13 +173,14 @@ class TelegramBot
     /**
      * Отправляет документ
      *
-     * @param SendDocument $document
-     * @return Message
+     * @param SendFileDocument $document
+     *
+*@return Message
      * @throws TelegramBotException
      */
-    public function sendDocument(SendDocument $document)
+    public function sendDocument ( SendFileDocument $document)
     {
-        $response = $this->request->query('sendDocument', $document->convertToQuery());
+        $response = $this->request->query('sendDocument', $document->toArray());
 
         return new Message($response);
     }
@@ -183,13 +188,14 @@ class TelegramBot
     /**
      * Отправляет стикер в формате .webm
      *
-     * @param SendSticker $sticker
-     * @return Message
+     * @param SendFileSticker $sticker
+     *
+*@return Message
      * @throws TelegramBotException
      */
-    public function sendSticker(SendSticker $sticker)
+    public function sendSticker ( SendFileSticker $sticker)
     {
-        $response = $this->request->query('sendSticker', $sticker->convertToQuery());
+        $response = $this->request->query('sendSticker', $sticker->toArray());
 
         return new Message($response);
     }
@@ -197,13 +203,14 @@ class TelegramBot
     /**
      * Отправляет видео в формате .mp4
      *
-     * @param SendVideo $video
-     * @return Message
+     * @param SendFileVideo $video
+     *
+*@return Message
      * @throws TelegramBotException
      */
-    public function sendVideo(SendVideo $video)
+    public function sendVideo ( SendFileVideo $video)
     {
-        $response = $this->request->query('sendVideo', $video->convertToQuery());
+        $response = $this->request->query('sendVideo', $video->toArray());
 
         return new Message($response);
     }
@@ -211,13 +218,14 @@ class TelegramBot
     /**
      * Отправляет голосовое сообщение в формате .ogg и кодеком OPUS
      *
-     * @param SendVoice $voice
-     * @return Message
+     * @param SendFileVoice $voice
+     *
+*@return Message
      * @throws TelegramBotException
      */
-    public function sendVoice(SendVoice $voice)
+    public function sendVoice ( SendFileVoice $voice)
     {
-        $response = $this->request->query('sendVoice', $voice->convertToQuery());
+        $response = $this->request->query('sendVoice', $voice->toArray());
 
         return new Message($response);
     }
@@ -225,13 +233,14 @@ class TelegramBot
     /**
      * Отправить позицию
      *
-     * @param SendLocation $location
-     * @return Message
+     * @param LocationSend $location
+     *
+*@return Message
      * @throws TelegramBotException
      */
-    public function sendLocation(SendLocation $location)
+    public function sendLocation ( LocationSend $location)
     {
-        $response = $this->request->query('sendLocation', $location->convertToQuery());
+        $response = $this->request->query('sendLocation', $location->toArray());
 
         return new Message($response);
     }
@@ -245,7 +254,7 @@ class TelegramBot
      */
     public function sendVenue(SendVenue $venue)
     {
-        $response = $this->request->query('sendVenue', $venue->convertToQuery());
+        $response = $this->request->query('sendVenue', $venue->toArray());
 
         return new Message($response);
     }
@@ -253,13 +262,14 @@ class TelegramBot
     /**
      * Отправляет контакт
      *
-     * @param SendContact $contact
-     * @return Message
+     * @param ContactSend $contact
+     *
+*@return Message
      * @throws TelegramBotException
      */
-    public function sendContact(SendContact $contact)
+    public function sendContact ( ContactSend $contact)
     {
-        $response = $this->request->query('sendContact', $contact->convertToQuery());
+        $response = $this->request->query('sendContact', $contact->toArray());
 
         return new Message($response);
     }
@@ -309,7 +319,7 @@ class TelegramBot
     public function getUserProfilePhotos($user_id, $offset = null, $limit = null)
     {
         $GetUserPhoto = new GetUserProfilePhotos(['user_id' => $user_id, 'offset' => $offset, 'limit' => $limit]);
-        $response = $this->request->query('getUserProfilePhotos', $GetUserPhoto->convertToQuery());
+        $response = $this->request->query('getUserProfilePhotos', $GetUserPhoto->toArray());
 
         return new UserProfilePhotos($response);
     }
@@ -445,13 +455,14 @@ class TelegramBot
     /**
      * Устанавливает WebHook
      *
-     * @param SendWebhook $webhook
-     * @return array
+     * @param SendFileWebhook $webhook
+     *
+*@return array
      * @throws TelegramBotException
      */
-    public function setWebhook(SendWebhook $webhook)
+    public function setWebhook ( SendFileWebhook $webhook)
     {
-        $response = $this->request->query('setWebhook', $webhook->convertToQuery(), true);
+        $response = $this->request->query('setWebhook', $webhook->toArray(), true);
         return $response;
     }
 }

@@ -1,114 +1,186 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: d.kuznetsov
- * Date: 22.05.2016
- * Time: 19:57
- */
 
 namespace TelegramBotLibrary\APIModels\BaseModels;
 
-use TelegramBotLibrary\Exceptions\TelegramBotException;
+use TelegramBotLibrary\Exceptions\TelegramRuntimeException;
 
 abstract class BaseModel
 {
     /**
-     * Описание типов переменных класса
-     * При указании опции CreateWith будет создан экземпляр (или массив экзепляров) указанного класса
-     * и будет передан ему в конструктор значение из config'а
-     *
-     * [
-     *      'variable_name' => [
-     *          'CreateWith' => [
-     *              'type' => 'object || array || array of array',
-     *              'class' => CLASS_NAME
-     *          ]
-     *      ]
-     * ]
+     * @var CreateWithConfiguration[]
      */
-    const TYPES = [];
+    protected $createWithConfiguration = [];
 
-    private function getTypes() {
-        return static::TYPES;
-    }
+    public function __construct ( $data = [], $useTypeMapper = true )
+    {
+        $this->configure( $data );
+        if ( !is_array( $data ) ) $data = [];
 
-    public function __construct($config = [], $use_mapper = true) {
-        if( !is_array($config) ) $config = [];
-
-        $typesConfiguration = (object)json_decode(json_encode( $this->getTypes() ));
-
-        foreach ($config as $key => $val) {
-            // для этого поля массива есть конфиг в поле TYPES и используем маппер
-            if( isset( $typesConfiguration->{$key} ) && $use_mapper === true ) {
-                $keyConfigSet = $typesConfiguration->{$key};
-
-                if( isset($keyConfigSet->CreateWith) ) {
-                    if (!isset($keyConfigSet->CreateWith->type)) throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
-
-                    switch ($keyConfigSet->CreateWith->type) {
-                        case 'object':
-                            if (!isset($keyConfigSet->CreateWith->class)) {
-                                throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
-                            }
-                            $class = $keyConfigSet->CreateWith->class;
-                            $this->$key = new $class($val);
-                            break;
-
-                        case 'array':
-                            if (!isset($keyConfigSet->CreateWith->class)) {
-                                throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
-                            }
-                            $class = $keyConfigSet->CreateWith->class;
-                            foreach ($val as $valKey => $valVal) {
-                                $this->{$key}[$valKey] = new $class($valVal);
-                            }
-                            break;
-
-                        case 'array of array':
-                            if (!isset($keyConfigSet->CreateWith->class)) {
-                                throw new TelegramBotException('Неверное описание CreateWith поля ' . $key . ' класса ' . get_class($this));
-                            }
-                            $class = $keyConfigSet->CreateWith->class;
-                            foreach ($val as $valueKey => $valueArray) {
-                                foreach ($valueArray as $valueInnerKey => $valueInnerValue) {
-                                    $this->{$key}[$valueKey][$valueInnerKey] = new $class($valueInnerValue);
-                                }
-                            }
-                            break;
-
-                        default:
-                            $this->{$key} = $val;
-                            break;
-                    }
-                } else {
-                    $this->$key = $val;
-                }
-            } else {
-                $this->$key = $val;
+        if ( $useTypeMapper ) {
+            $this->mapData( $data );
+        } else {
+            foreach ( $data as $key => $value ) {
+                $this->{$key} = $value;
             }
         }
     }
 
-    public static function convertToArray($object) {
-        if( is_object($object) ) $object = get_object_vars($object);
+    abstract protected function configure ( $data );
+
+    /**
+     * @param      $fieldName
+     * @param      $typeName
+     * @param null $type
+     *
+     * @return $this
+     */
+    protected function setCreateWithConfiguration ( $fieldName, $typeName, $type = null )
+    {
+        $this->createWithConfiguration[ $fieldName ] = new CreateWithConfiguration( $typeName, $type );
+
+        return $this;
+    }
+
+    /**
+     * @param $fieldName
+     *
+     * @return $this
+     */
+    protected function unsetCreateWithConfiguration ( $fieldName )
+    {
+        $this->createWithConfiguration[ $fieldName ] = null;
+        unset( $this->createWithConfiguration[ $fieldName ] );
+
+        return $this;
+    }
+
+    /**
+     * @return CreateWithConfiguration[]
+     */
+    protected function getCreateWithConfiguration ()
+    {
+        return $this->createWithConfiguration;
+    }
+
+    public function mapData ( $data )
+    {
+        $createWithConfiguration = $this->getCreateWithConfiguration();
+
+        foreach ( $data as $dataKey => $dataValue ) {
+            // Если для этого поля массива есть конфиг
+            if ( isset( $createWithConfiguration[ $dataKey ] ) ) {
+                $this->prepareFieldToMap( $dataValue, $createWithConfiguration[ $dataKey ] );
+            } else {
+                $this->{$dataKey} = $dataValue;
+            }
+        }
+    }
+
+    protected function prepareFieldToMap ( $dataValue, CreateWithConfiguration $createWithConfiguration )
+    {
+        if ( !CreateWithTypes::isValidValue( $createWithConfiguration->getSubType() ) ) {
+            throw new TelegramRuntimeException( 'Wrong subtype name: ' . $createWithConfiguration->getSubType() );
+        }
+
+        switch ( $createWithConfiguration->getSubType() ) {
+            case CreateWithTypes::Scalar:
+                if ( $createWithConfiguration->getType() ) {
+                    settype( $dataValue, $createWithConfiguration->getType() );
+                }
+
+                return $dataValue;
+
+            case CreateWithTypes::ArrayOfScalar:
+                $newArray = [];
+                foreach ( $dataValue as $parentKey => $parentValue ) {
+                    if ( $createWithConfiguration->getType() ) {
+                        settype( $parentValue, $createWithConfiguration->getType() );
+                    }
+                    $newArray[ $parentKey ] = $parentValue;
+                }
+
+                return $newArray;
+
+            case CreateWithTypes::ArrayOfArrayOfScalar:
+                $newArray = [];
+                foreach ( $dataValue as $parentKey => $parentValue ) {
+                    foreach ( $parentValue as $childKey => $childValue ) {
+                        if ( $createWithConfiguration->getType() ) {
+                            settype( $childValue, $createWithConfiguration->getType() );
+                        }
+                        $newArray[ $parentKey ][ $childKey ] = $childValue;
+                    }
+                }
+
+                return $newArray;
+
+            case CreateWithTypes::Object:
+                if ( $createWithConfiguration->getType() ) {
+                    $class = $createWithConfiguration->getType();
+
+                    return new $class( $dataValue );
+                } else {
+                    return (object)$dataValue;
+                }
+
+            case CreateWithTypes::ArrayOfObjects:
+                $newArray = [];
+                foreach ( $dataValue as $parentKey => $parentValue ) {
+                    if ( $createWithConfiguration->getType() ) {
+                        $class = $createWithConfiguration->getType();
+                        $newArray[ $parentKey ] = new $class( $parentValue );
+                    } else {
+                        $newArray[ $parentKey ] = (object)$parentValue;
+                    }
+                }
+
+                return $newArray;
+
+            case CreateWithTypes::ArrayOfArrayOfObjects:
+                $newArray = [];
+                foreach ( $dataValue as $parentKey => $parentValue ) {
+                    foreach ( $parentValue as $childKey => $childValue ) {
+                        if ( $createWithConfiguration->getType() ) {
+                            $class = $createWithConfiguration->getType();
+                            $newArray[ $parentKey ][ $childKey ] = new $class( $childValue );
+                        } else {
+                            $newArray[ $parentKey ][ $childKey ] = (object)$childValue;
+                        }
+                    }
+                }
+
+                return $newArray;
+        }
+
+        throw new TelegramRuntimeException( 'Unexpected error' );
+    }
+
+    public function validate ()
+    {
+        // TODO: проверка типов данных
+    }
+
+    protected static function objectToArray ( $object )
+    {
+        if ( is_object( $object ) ) $object = get_object_vars( $object );
 
         $resultArray = [];
-        foreach ($object as $key => $value) {
-            if(!is_null($value)) {
-                switch ( gettype($value) ) {
+        foreach ( $object as $objectKey => $objectValue ) {
+            if ( !is_null( $objectValue ) ) {
+                switch ( gettype( $objectValue ) ) {
                     case 'object':
-                        $resultArray[$key] = method_exists($value, 'convertToQuery') ? $value->convertToQuery() : $value;
+                        $resultArray[ $objectKey ] = method_exists( $objectValue, 'toArray' ) ? $objectValue->toArray() : $objectValue;
                         break;
 
                     case 'array':
-                        foreach ($value as $valKey => $valValue) {
-                            $value[$valKey] = static::convertToArray($valValue);
+                        foreach ( $objectValue as $parentKey => $parentValue ) {
+                            $objectValue[ $parentKey ] = static::objectToArray( $parentValue );
                         }
-                        $resultArray[$key] = $value;
+                        $resultArray[ $objectKey ] = $objectValue;
                         break;
 
                     default:
-                        $resultArray[$key] = $value;
+                        $resultArray[ $objectKey ] = $objectValue;
                         break;
                 }
             }
@@ -117,11 +189,8 @@ abstract class BaseModel
         return $resultArray;
     }
 
-    public function convertToQuery() {
-        return static::convertToArray($this);
-    }
-
-    public function validate() {
-        // TODO: проверка отправляемых данных
+    public function toArray ()
+    {
+        return static::objectToArray( $this );
     }
 }

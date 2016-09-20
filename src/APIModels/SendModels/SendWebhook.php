@@ -9,12 +9,17 @@
 namespace TelegramBotLibrary\APIModels\SendModels;
 
 
-use TelegramBotLibrary\APIModels\BaseModels\SendFileBaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\BaseSendFileModel;
 
-class SendWebhook extends SendFileBaseModel
+class SendFileWebhook extends BaseSendFileModel
 {
     const TYPE = 'certificate';
 
     public $url;
     public $certificate;
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
+    }
 }

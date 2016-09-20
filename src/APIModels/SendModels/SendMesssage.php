@@ -9,12 +9,17 @@
 namespace TelegramBotLibrary\APIModels\SendModels;
 
 
-use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class SendMesssage extends SendBaseModel
+class MesssageSend extends BaseSendModel
 {
     public $chat_id;
     public $text;
     public $parse_mode;
     public $disable_web_page_preview;
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
+    }
 }

@@ -11,7 +11,7 @@ namespace TelegramBotLibrary\APIModels\Enums;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseEnum;
 
-class MessageEntityTypesENUM extends BaseEnum
+class MessageEntityTypes extends BaseEnum
 {
     const MENTION = 'mention';
     const HASHTAG = 'hashtag';

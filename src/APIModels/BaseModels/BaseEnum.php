@@ -1,29 +1,41 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: d.kuznetsov
- * Date: 22.05.2016
- * Time: 21:06
- */
 
 namespace TelegramBotLibrary\APIModels\BaseModels;
 
+use ReflectionClass;
 
-abstract class BaseEnum {
-    private $current_val;
+abstract class BaseEnum
+{
 
-    final public function __construct( $type ) {
-        $class_name = get_class( $this );
+    public static function getConstList ( $firstPosFilter = null )
+    {
+        $reflect = new ReflectionClass( static::class );
+        $consts = $reflect->getConstants();
 
-        $type = strtoupper( $type );
-        if ( constant( "{$class_name}::{$type}" )  === NULL ) {
-            throw new \Exception( 'Свойства '.$type.' в перечислении '.$class_name.' не найдено.' );
+        if ( $firstPosFilter && is_string( $firstPosFilter ) ) {
+            $consts = array_filter(
+                $consts,
+                function ( $value, $name ) use ( $firstPosFilter ) {
+                    return ( mb_strpos( mb_strtolower( $name ), mb_strtolower( $firstPosFilter ) ) === 0 );
+                },
+                ARRAY_FILTER_USE_BOTH
+            );
         }
 
-        $this->current_val = constant( "{$class_name}::{$type}" );
+        return $consts;
     }
 
-    final public function __toString() {
-        return $this->current_val;
+    public static function isValidName ( $name, $strict = false )
+    {
+        $names = array_keys( self::getConstList() );
+
+        return in_array( $name, $names, $strict );
+    }
+
+    public static function isValidValue ( $value, $strict = true )
+    {
+        $values = array_values( self::getConstList() );
+
+        return in_array( $value, $values, $strict );
     }
 }

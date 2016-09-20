@@ -8,15 +8,21 @@
 
 namespace TelegramBotLibrary\APIModels\SendModels\ReplyKeyboard;
 
-use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class SendForceReply extends SendBaseModel
+class ForceReplySend extends BaseSendModel
 {
     public $force_reply = true;
+
     public $selective;
 
-    public function convertToQuery() {
-        $arr = parent::convertToQuery();
-        return json_encode($arr);
+    public function toArray ()
+    {
+        return json_encode( parent::toArray() );
+    }
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
     }
 }

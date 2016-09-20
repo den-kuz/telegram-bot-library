@@ -2,16 +2,17 @@
 /**
  * Created by PhpStorm.
  * User: d.kuznetsov
- * Date: 19.07.2016
- * Time: 22:59
+ * Date: 19.09.2016
+ * Time: 15:46
  */
 
 namespace TelegramBotLibrary\APIModels\BaseTypes;
 
+
 use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
 use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
 
-class CallbackQuery extends BaseModel
+class InlineQuery extends BaseModel
 {
     /**
      * @var string
@@ -24,27 +25,27 @@ class CallbackQuery extends BaseModel
     public $from;
 
     /**
-     * @var Message
+     * @var Location
      */
-    public $message;
+    public $location;
 
     /**
      * @var string
      */
-    public $inline_message_id;
+    public $query;
 
     /**
      * @var string
      */
-    public $data;
+    public $offset;
 
     protected function configure ( $data )
     {
         $this
             ->setCreateWithConfiguration( 'id', CreateWithTypes::Scalar, 'string' )
             ->setCreateWithConfiguration( 'from', CreateWithTypes::Object, User::class )
-            ->setCreateWithConfiguration( 'message', CreateWithTypes::Object, Message::class )
-            ->setCreateWithConfiguration( 'inline_message_id', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'data', CreateWithTypes::Scalar, 'string' );
+            ->setCreateWithConfiguration( 'location', CreateWithTypes::Object, Location::class )
+            ->setCreateWithConfiguration( 'query', CreateWithTypes::Scalar, 'string' )
+            ->setCreateWithConfiguration( 'offset', CreateWithTypes::Scalar, 'string' );
     }
 }

@@ -10,126 +10,10 @@ namespace TelegramBotLibrary\APIModels\BaseTypes;
 
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
 
 class Message extends BaseModel
 {
-    const TYPES = [
-        'from' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'User'
-            ]
-        ],
-        'chat' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Chat'
-            ]
-        ],
-        'forward_from' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'User'
-            ]
-        ],
-        'forward_from_chat' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Chat'
-            ]
-        ],
-        'reply_to_message' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Message'
-            ]
-        ],
-        'entities' => [
-            'CreateWith' => [
-                'type' => 'array',
-                'class' => __NAMESPACE__ . '\\' . 'MessageEntity'
-            ]
-        ],
-        'audio' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Audio'
-            ]
-        ],
-        'document' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Document'
-            ]
-        ],
-        'photo' => [
-            'CreateWith' => [
-                'type' => 'array',
-                'class' => __NAMESPACE__ . '\\' . 'PhotoSize'
-            ]
-        ],
-        'sticker' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Sticker'
-            ]
-        ],
-        'video' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Video'
-            ]
-        ],
-        'voice' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Voice'
-            ]
-        ],
-        'contact' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Contact'
-            ]
-        ],
-        'location' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Location'
-            ]
-        ],
-        'venue' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Venue'
-            ]
-        ],
-        'new_chat_member' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'User'
-            ]
-        ],
-        'left_chat_member' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'User'
-            ]
-        ],
-        'new_chat_photo' => [
-            'CreateWith' => [
-                'type' => 'array',
-                'class' => __NAMESPACE__ . '\\' . 'PhotoSize'
-            ]
-        ],
-        'pinned_message' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Message'
-            ]
-        ]
-    ];
-
     /**
      * @var integer
      */
@@ -239,50 +123,62 @@ class Message extends BaseModel
      * @var User
      */
     public $new_chat_member;
+
     /**
      * @var User
      */
     public $new_chat_participant;
+
     /**
      * @var User
      */
     public $left_chat_member;
+
     /**
      * @var User
      */
     public $left_chat_participant;
+
     /**
      * @var string
      */
     public $new_chat_title;
+
     /**
      * @var PhotoSize[]
      */
     public $new_chat_photo;
+
     /**
      * @var boolean
      */
     public $delete_chat_photo;
+
     /**
      * @var boolean
      */
     public $group_chat_created;
+
     /**
      * @var boolean
      */
     public $supergroup_chat_created;
+
     /**
      * @var boolean
      */
     public $channel_chat_created;
+
     /**
      * @var integer
      */
     public $migrate_to_chat_id;
+
     /**
      * @var integer
      */
     public $migrate_from_chat_id;
+
     /**
      * @var Message
      */
@@ -291,17 +187,57 @@ class Message extends BaseModel
 
     /**
      * @param $type
+     *
      * @return MessageEntity[]
      */
-    public function getEntities($type)
+    public function getEntitiesByType ( $type )
     {
         $entities = [];
-        if (is_array($this->entities)) {
-            foreach ($this->entities as $entity) {
-                if ($entity->type == $type) $entities[] = $entity;
+        if ( is_array( $this->entities ) ) {
+            foreach ( $this->entities as $entity ) {
+                if ( $entity->type == $type ) $entities[] = $entity;
             }
         }
 
         return $entities;
+    }
+
+    protected function configure ( $data )
+    {
+        $this
+            ->setCreateWithConfiguration( 'message_id', CreateWithTypes::Scalar, 'integer' )
+            ->setCreateWithConfiguration( 'from', CreateWithTypes::Object, User::class )
+            ->setCreateWithConfiguration( 'date', CreateWithTypes::Scalar, 'integer' )
+            ->setCreateWithConfiguration( 'chat', CreateWithTypes::Object, Chat::class )
+            ->setCreateWithConfiguration( 'forward_from', CreateWithTypes::Object, User::class )
+            ->setCreateWithConfiguration( 'forward_from_chat', CreateWithTypes::Object, Chat::class )
+            ->setCreateWithConfiguration( 'forward_date', CreateWithTypes::Scalar, 'integer' )
+            ->setCreateWithConfiguration( 'edit_date', CreateWithTypes::Scalar, 'integer' )
+            ->setCreateWithConfiguration( 'reply_to_message', CreateWithTypes::Object, Message::class )
+            ->setCreateWithConfiguration( 'text', CreateWithTypes::Scalar, 'string' )
+            ->setCreateWithConfiguration( 'entities', CreateWithTypes::ArrayOfObjects, MessageEntity::class )
+            ->setCreateWithConfiguration( 'audio', CreateWithTypes::Object, Audio::class )
+            ->setCreateWithConfiguration( 'document', CreateWithTypes::Object, Document::class )
+            ->setCreateWithConfiguration( 'photo', CreateWithTypes::ArrayOfObjects, PhotoSize::class )
+            ->setCreateWithConfiguration( 'sticker', CreateWithTypes::Object, Sticker::class )
+            ->setCreateWithConfiguration( 'video', CreateWithTypes::Object, Video::class )
+            ->setCreateWithConfiguration( 'voice', CreateWithTypes::Object, Voice::class )
+            ->setCreateWithConfiguration( 'caption', CreateWithTypes::Scalar, 'string' )
+            ->setCreateWithConfiguration( 'contact', CreateWithTypes::Object, Contact::class )
+            ->setCreateWithConfiguration( 'location', CreateWithTypes::Object, Location::class )
+            ->setCreateWithConfiguration( 'venue', CreateWithTypes::Object, Venue::class )
+            ->setCreateWithConfiguration( 'new_chat_member', CreateWithTypes::Object, User::class )
+            ->setCreateWithConfiguration( 'new_chat_participant', CreateWithTypes::Object, User::class )
+            ->setCreateWithConfiguration( 'left_chat_member', CreateWithTypes::Object, User::class )
+            ->setCreateWithConfiguration( 'left_chat_participant', CreateWithTypes::Object, User::class )
+            ->setCreateWithConfiguration( 'new_chat_title', CreateWithTypes::Scalar, 'string' )
+            ->setCreateWithConfiguration( 'new_chat_photo', CreateWithTypes::ArrayOfObjects, PhotoSize::class )
+            ->setCreateWithConfiguration( 'delete_chat_photo', CreateWithTypes::Scalar, 'boolean' )
+            ->setCreateWithConfiguration( 'group_chat_created', CreateWithTypes::Scalar, 'boolean' )
+            ->setCreateWithConfiguration( 'supergroup_chat_created', CreateWithTypes::Scalar, 'boolean' )
+            ->setCreateWithConfiguration( 'channel_chat_created', CreateWithTypes::Scalar, 'boolean' )
+            ->setCreateWithConfiguration( 'migrate_to_chat_id', CreateWithTypes::Scalar, 'integer' )
+            ->setCreateWithConfiguration( 'migrate_from_chat_id', CreateWithTypes::Scalar, 'integer' )
+            ->setCreateWithConfiguration( 'pinned_message', CreateWithTypes::Object, Message::class );
     }
 }

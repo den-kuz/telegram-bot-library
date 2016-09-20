@@ -9,15 +9,19 @@
 namespace TelegramBotLibrary\APIModels\SendModels\InlineKeyboard;
 
 
-use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class SendInlineKeyboardMarkup extends SendBaseModel
+class InlineKeyboardMarkupSend extends BaseSendModel
 {
     public $inline_keyboard;
 
-    public function convertToQuery()
+    public function toArray ()
     {
-        $arr = parent::convertToQuery();
-        return json_encode($arr);
+        return json_encode( parent::toArray() );
+    }
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
     }
 }

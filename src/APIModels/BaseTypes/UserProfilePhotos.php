@@ -10,18 +10,24 @@ namespace TelegramBotLibrary\APIModels\BaseTypes;
 
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
 
 class UserProfilePhotos extends BaseModel
 {
-    const TYPES = [
-        'photos' => [
-            'CreateWith' => [
-                'type'  => 'array of array',
-                'class' => __NAMESPACE__ . '\\' . 'PhotoSize'
-            ]
-        ]
-    ];
-    
+    /**
+     * @var integer
+     */
     public $total_count;
+
+    /**
+     * @var PhotoSize[][]
+     */
     public $photos;
+
+    protected function configure ( $data )
+    {
+        $this
+            ->setCreateWithConfiguration( 'total_count', CreateWithTypes::Scalar, 'integer' )
+            ->setCreateWithConfiguration( 'photos', CreateWithTypes::ArrayOfArrayOfObjects, PhotoSize::class );
+    }
 }

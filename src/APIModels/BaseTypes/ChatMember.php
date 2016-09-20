@@ -8,20 +8,25 @@
 
 namespace TelegramBotLibrary\APIModels\BaseTypes;
 
-
 use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
 
 class ChatMember extends BaseModel
 {
-    const TYPES = [
-        'user' => [
-            'CreateWith' => [
-                'type'  => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'User'
-            ]
-        ]
-    ];
-
+    /**
+     * @var User
+     */
     public $user;
+
+    /**
+     * @var string
+     */
     public $status;
+
+    protected function configure ( $data )
+    {
+        $this
+            ->setCreateWithConfiguration( 'user', CreateWithTypes::Object, User::class )
+            ->setCreateWithConfiguration( 'status', CreateWithTypes::Scalar, 'string' );
+    }
 }

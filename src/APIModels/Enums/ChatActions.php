@@ -11,7 +11,7 @@ namespace TelegramBotLibrary\APIModels\Enums;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseEnum;
 
-class ChatActionsENUM extends BaseEnum
+class ChatActions extends BaseEnum
 {
     const TYPING = 'typing';
     const UPLOAD_PHOTO = 'upload_photo';

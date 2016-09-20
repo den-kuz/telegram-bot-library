@@ -9,9 +9,9 @@
 namespace TelegramBotLibrary\APIModels\SendModels;
 
 
-use TelegramBotLibrary\APIModels\BaseModels\SendFileBaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\BaseSendFileModel;
 
-class SendVideo extends SendFileBaseModel
+class SendFileVideo extends BaseSendFileModel
 {
     const TYPE = 'video';
     
@@ -21,4 +21,9 @@ class SendVideo extends SendFileBaseModel
     public $width;
     public $height;
     public $caption;
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
+    }
 }

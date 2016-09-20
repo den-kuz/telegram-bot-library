@@ -11,7 +11,7 @@ namespace TelegramBotLibrary\APIModels\Enums;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseEnum;
 
-class ChatTypesENUM extends BaseEnum
+class ChatTypes extends BaseEnum
 {
     const TYPE_PRIVATE = 'private';
     const TYPE_GROUP = 'group';

@@ -10,20 +10,36 @@ namespace TelegramBotLibrary\APIModels\BaseTypes;
 
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
 
 class Venue extends BaseModel
 {
-    const TYPES = [
-        'location' => [
-            'CreateWith' => [
-                'type'  => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Location'
-            ]
-        ]
-    ];
-    
+    /**
+     * @var Location
+     */
     public $location;
+
+    /**
+     * @var string
+     */
     public $title;
+
+    /**
+     * @var string
+     */
     public $address;
+
+    /**
+     * @var string
+     */
     public $foursquare_id;
+
+    protected function configure ( $data )
+    {
+        $this
+            ->setCreateWithConfiguration( 'location', CreateWithTypes::Object, Location::class )
+            ->setCreateWithConfiguration( 'title', CreateWithTypes::Scalar, 'string' )
+            ->setCreateWithConfiguration( 'address', CreateWithTypes::Scalar, 'string' )
+            ->setCreateWithConfiguration( 'foursquare_id', CreateWithTypes::Scalar, 'string' );
+    }
 }

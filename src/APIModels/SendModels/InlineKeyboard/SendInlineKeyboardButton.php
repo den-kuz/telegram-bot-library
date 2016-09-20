@@ -9,12 +9,17 @@
 namespace TelegramBotLibrary\APIModels\SendModels\InlineKeyboard;
 
 
-use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class SendInlineKeyboardButton extends SendBaseModel
+class InlineKeyboardButtonSend extends BaseSendModel
 {
     public $text;
     public $url;
     public $callback_data;
     public $switch_inline_query;
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
+    }
 }

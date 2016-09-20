@@ -9,12 +9,17 @@
 namespace TelegramBotLibrary\APIModels\SendModels;
 
 
-use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class SendContact extends SendBaseModel
+class ContactSend extends BaseSendModel
 {
     public $chat_id;
     public $phone_number;
     public $first_name;
     public $last_name;
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
+    }
 }

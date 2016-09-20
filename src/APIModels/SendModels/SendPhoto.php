@@ -8,13 +8,18 @@
 
 namespace TelegramBotLibrary\APIModels\SendModels;
 
-use TelegramBotLibrary\APIModels\BaseModels\SendFileBaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\BaseSendFileModel;
 
-class SendPhoto extends SendFileBaseModel
+class SendFilePhoto extends BaseSendFileModel
 {
     const TYPE = 'photo'; 
     
     public $chat_id;
     public $photo;
     public $caption;
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
+    }
 }

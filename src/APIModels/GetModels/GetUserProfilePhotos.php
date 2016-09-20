@@ -16,4 +16,9 @@ class GetUserProfilePhotos extends BaseModel
     public $user_id;
     public $offset;
     public $limit;
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
+    }
 }

@@ -9,21 +9,30 @@
 namespace TelegramBotLibrary\APIModels\SendModels\ReplyKeyboard;
 
 
-use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class SendReplyKeyboardMarkup extends SendBaseModel
+class ReplyKeyboardMarkupSend extends BaseSendModel
 {
     public $keyboard;
+
     public $resize_keyboard;
+
     public $one_time_keyboard;
+
     public $selective;
 
-    public function addKeyBoardRow($row) {
+    public function addKeyBoardRow ( $row )
+    {
         $this->keyboard[] = $row;
     }
 
-    public function convertToQuery() {
-        $arr = parent::convertToQuery();
-        return json_encode($arr);
+    public function toArray ()
+    {
+        return json_encode( parent::toArray() );
+    }
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
     }
 }

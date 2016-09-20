@@ -1,40 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: d.kuznetsov
- * Date: 22.05.2016
- * Time: 20:05
- */
 
 namespace TelegramBotLibrary\APIModels\BaseTypes;
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
 
 class Update extends BaseModel
 {
-    const TYPES = [
-        'message' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Message'
-            ]
-        ],
-        'edited_message' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'Message'
-            ]
-        ],
-        'callback_query' => [
-            'CreateWith' => [
-                'type' => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'CallbackQuery'
-            ]
-        ]
-    ];
-
     /**
-     * @var int
+     * @var integer
      */
     public $update_id;
 
@@ -49,7 +23,28 @@ class Update extends BaseModel
     public $edited_message;
 
     /**
+     * @var InlineQuery
+     */
+    public $inline_query;
+
+    /**
+     * @var ChosenInlineResult
+     */
+    public $chosen_inline_result;
+
+    /**
      * @var CallbackQuery
      */
     public $callback_query;
+
+    protected function configure ( $data )
+    {
+        $this
+            ->setCreateWithConfiguration( 'update_id', CreateWithTypes::Scalar, 'integer' )
+            ->setCreateWithConfiguration( 'message', CreateWithTypes::Object, Message::class )
+            ->setCreateWithConfiguration( 'edited_message', CreateWithTypes::Object, Message::class )
+            ->setCreateWithConfiguration( 'inline_query', CreateWithTypes::Object, InlineQuery::class )
+            ->setCreateWithConfiguration( 'chosen_inline_result', CreateWithTypes::Object, ChosenInlineResult::class )
+            ->setCreateWithConfiguration( 'callback_query', CreateWithTypes::Object, CallbackQuery::class );
+    }
 }

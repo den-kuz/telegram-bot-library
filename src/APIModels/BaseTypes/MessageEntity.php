@@ -10,21 +10,28 @@ namespace TelegramBotLibrary\APIModels\BaseTypes;
 
 
 use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
 
 class MessageEntity extends BaseModel
 {
-    const TYPES = [
-        'user' => [
-            'CreateWith' => [
-                'type'  => 'object',
-                'class' => __NAMESPACE__ . '\\' . 'User'
-            ]
-        ]
-    ];
-
+    /**
+     * @var string
+     */
     public $type;
+
+    /**
+     * @var integer
+     */
     public $offset;
+
+    /**
+     * @var integer
+     */
     public $length;
+
+    /**
+     * @var string
+     */
     public $url;
 
     /**
@@ -32,21 +39,48 @@ class MessageEntity extends BaseModel
      */
     public $user;
 
-    public function getEntityVal($text)
+    protected function configure ( $data )
     {
-        return mb_substr($text, $this->offset, $this->length);
+        $this
+            ->setCreateWithConfiguration( 'type', CreateWithTypes::Scalar, 'string' )
+            ->setCreateWithConfiguration( 'offset', CreateWithTypes::Scalar, 'integer' )
+            ->setCreateWithConfiguration( 'length', CreateWithTypes::Scalar, 'integer' )
+            ->setCreateWithConfiguration( 'url', CreateWithTypes::Scalar, 'string' )
+            ->setCreateWithConfiguration( 'user', CreateWithTypes::Object, User::class );
     }
 
-    public function getCommand($text)
+    public function getValueFromText ( $text )
     {
-        $val = $this->getEntityVal($text);
-        $splitCommand = explode('@', $val);
-
-        return $splitCommand[0];
+        return mb_substr( $text, $this->offset, $this->length );
     }
 
-    public function getTextExcludeEntity($text)
+    public function getValueClearCommand ( $text )
     {
-        return trim(mb_substr($text, $this->offset + $this->length, mb_strlen($text)));
+        $val = $this->getValueFromText( $text );
+        $splitCommand = explode( '@', $val );
+
+        return $splitCommand[ 0 ];
+    }
+
+    public function getTextAfterEntity ( $text, $trim = true )
+    {
+        $result = mb_substr( $text, $this->offset + $this->length, mb_strlen( $text ) );
+
+        if ( $trim ) {
+            $result = trim( $result );
+        }
+
+        return $result;
+    }
+
+    public function getTextBeforeEntity ( $text, $trim = true )
+    {
+        $result = mb_substr( $text, 0, $this->offset );
+
+        if ( $trim ) {
+            $result = trim( $result );
+        }
+
+        return $result;
     }
 }

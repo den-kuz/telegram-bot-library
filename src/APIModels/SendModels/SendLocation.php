@@ -8,11 +8,16 @@
 
 namespace TelegramBotLibrary\APIModels\SendModels;
 
-use TelegramBotLibrary\APIModels\BaseModels\SendBaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\BaseSendModel;
 
-class SendLocation extends SendBaseModel
+class LocationSend extends BaseSendModel
 {
     public $chat_id;
     public $latitude;
     public $longitude;
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
+    }
 }

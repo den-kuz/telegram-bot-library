@@ -8,9 +8,9 @@
 
 namespace TelegramBotLibrary\APIModels\SendModels;
 
-use TelegramBotLibrary\APIModels\BaseModels\SendFileBaseModel;
+use TelegramBotLibrary\APIModels\BaseModels\BaseSendFileModel;
 
-class SendAudio extends SendFileBaseModel
+class SendFileAudio extends BaseSendFileModel
 {
     const TYPE = 'audio';
     
@@ -19,4 +19,9 @@ class SendAudio extends SendFileBaseModel
     public $duration;
     public $performer;
     public $title;
+
+    protected function configure ( $data )
+    {
+        // TODO: Implement configure() method.
+    }
 }
