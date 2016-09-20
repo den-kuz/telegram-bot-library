@@ -14,8 +14,8 @@ use TelegramBotLibrary\Exceptions\TelegramRuntimeException;
 
 class TelegramBotRequest
 {
-    const TELEGRAM_API_URL_TEMPLATE = 'https://api.telegram.org/bot{{token}}/{method}';
-    const TELEGRAM_FILE_URL_TEMPLATE = 'https://api.telegram.org/file/bot{{token}}/{path}';
+    const TELEGRAM_API_URL_TEMPLATE = 'https://api.telegram.org/bot{{token}}/{{method}}';
+    const TELEGRAM_FILE_URL_TEMPLATE = 'https://api.telegram.org/file/bot{{token}}/{{path}}';
 
     private $API_URL;
 
@@ -57,7 +57,7 @@ class TelegramBotRequest
      */
     private function getFileUrlByPath ( $path )
     {
-        return str_replace( 'P{path}}', $path, $this->FILE_URL );
+        return str_replace( '{{path}}', $path, $this->FILE_URL );
     }
 
     /**
