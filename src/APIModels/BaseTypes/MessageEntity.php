@@ -8,11 +8,12 @@
 
 namespace TelegramBotLibrary\APIModels\BaseTypes;
 
+use TelegramBotLibrary\APIModels\BaseModels\CreateType;
+use TelegramBotLibrary\APIModels\BaseModels\MapDataModel;
+use TelegramBotLibrary\APIModels\Enums\ScalarCreateTypes;
+use TelegramBotLibrary\APIModels\Enums\SystemCreateTypes;
 
-use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
-use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
-
-class MessageEntity extends BaseModel
+class MessageEntity extends MapDataModel
 {
     /**
      * @var string
@@ -39,27 +40,17 @@ class MessageEntity extends BaseModel
      */
     public $user;
 
-    protected function configure ( $data )
-    {
-        $this
-            ->setCreateWithConfiguration( 'type', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'offset', CreateWithTypes::Scalar, 'integer' )
-            ->setCreateWithConfiguration( 'length', CreateWithTypes::Scalar, 'integer' )
-            ->setCreateWithConfiguration( 'url', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'user', CreateWithTypes::Object, User::class );
-    }
-
-    public function getValueFromText ( $text )
-    {
-        return mb_substr( $text, $this->offset, $this->length );
-    }
-
     public function getValueClearCommand ( $text )
     {
         $val = $this->getValueFromText( $text );
         $splitCommand = explode( '@', $val );
 
         return $splitCommand[ 0 ];
+    }
+
+    public function getValueFromText ( $text )
+    {
+        return mb_substr( $text, $this->offset, $this->length );
     }
 
     public function getTextAfterEntity ( $text, $trim = true )
@@ -82,5 +73,19 @@ class MessageEntity extends BaseModel
         }
 
         return $result;
+    }
+
+
+
+    protected function configure ( $data )
+    {
+        $this
+            ->setCreateType( 'type', new CreateType ( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) )
+            ->setCreateType( 'offset', new CreateType ( SystemCreateTypes::Scalar, ScalarCreateTypes::INTEGER ) )
+            ->setCreateType( 'length', new CreateType ( SystemCreateTypes::Scalar, ScalarCreateTypes::INTEGER ) )
+            ->setCreateType( 'url', new CreateType ( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) )
+            ->setCreateType( 'user', new CreateType ( SystemCreateTypes::Object, User::class ) );
+
+        return $this;
     }
 }

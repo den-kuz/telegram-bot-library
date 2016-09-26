@@ -2,10 +2,12 @@
 
 namespace TelegramBotLibrary\APIModels\BaseTypes;
 
-use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
-use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
+use TelegramBotLibrary\APIModels\BaseModels\CreateType;
+use TelegramBotLibrary\APIModels\BaseModels\MapDataModel;
+use TelegramBotLibrary\APIModels\Enums\ScalarCreateTypes;
+use TelegramBotLibrary\APIModels\Enums\SystemCreateTypes;
 
-class Chat extends BaseModel
+class Chat extends MapDataModel
 {
     /**
      * @var integer
@@ -37,14 +39,18 @@ class Chat extends BaseModel
      */
     public $last_name;
 
+
+
     protected function configure ( $data )
     {
         $this
-            ->setCreateWithConfiguration( 'id', CreateWithTypes::Scalar, 'integer' )
-            ->setCreateWithConfiguration( 'type', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'title', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'username', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'first_name', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'last_name', CreateWithTypes::Scalar, 'string' );
+            ->setCreateType( 'id', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::INTEGER ) )
+            ->setCreateType( 'type', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) )
+            ->setCreateType( 'title', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) )
+            ->setCreateType( 'username', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) )
+            ->setCreateType( 'first_name', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) )
+            ->setCreateType( 'last_name', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) );
+
+        return $this;
     }
 }

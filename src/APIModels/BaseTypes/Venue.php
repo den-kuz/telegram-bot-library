@@ -8,11 +8,12 @@
 
 namespace TelegramBotLibrary\APIModels\BaseTypes;
 
+use TelegramBotLibrary\APIModels\BaseModels\CreateType;
+use TelegramBotLibrary\APIModels\BaseModels\MapDataModel;
+use TelegramBotLibrary\APIModels\Enums\ScalarCreateTypes;
+use TelegramBotLibrary\APIModels\Enums\SystemCreateTypes;
 
-use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
-use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
-
-class Venue extends BaseModel
+class Venue extends MapDataModel
 {
     /**
      * @var Location
@@ -34,12 +35,16 @@ class Venue extends BaseModel
      */
     public $foursquare_id;
 
+
+
     protected function configure ( $data )
     {
         $this
-            ->setCreateWithConfiguration( 'location', CreateWithTypes::Object, Location::class )
-            ->setCreateWithConfiguration( 'title', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'address', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'foursquare_id', CreateWithTypes::Scalar, 'string' );
+            ->setCreateType( 'location', new CreateType( SystemCreateTypes::Object, Location::class ) )
+            ->setCreateType( 'title', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) )
+            ->setCreateType( 'address', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) )
+            ->setCreateType( 'foursquare_id', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) );
+
+        return $this;
     }
 }

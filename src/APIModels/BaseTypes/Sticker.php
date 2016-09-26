@@ -8,10 +8,12 @@
 
 namespace TelegramBotLibrary\APIModels\BaseTypes;
 
-use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
-use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
+use TelegramBotLibrary\APIModels\BaseModels\CreateType;
+use TelegramBotLibrary\APIModels\BaseModels\MapDataModel;
+use TelegramBotLibrary\APIModels\Enums\ScalarCreateTypes;
+use TelegramBotLibrary\APIModels\Enums\SystemCreateTypes;
 
-class Sticker extends BaseModel
+class Sticker extends MapDataModel
 {
     /**
      * @var string
@@ -43,14 +45,18 @@ class Sticker extends BaseModel
      */
     public $file_size;
 
+
+
     protected function configure ( $data )
     {
         $this
-            ->setCreateWithConfiguration( 'file_id', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'width', CreateWithTypes::Scalar, 'integer' )
-            ->setCreateWithConfiguration( 'height', CreateWithTypes::Scalar, 'integer' )
-            ->setCreateWithConfiguration( 'thumb', CreateWithTypes::Object, PhotoSize::class )
-            ->setCreateWithConfiguration( 'emoji', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'file_size', CreateWithTypes::Scalar, 'integer' );
+            ->setCreateType( 'file_id', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) )
+            ->setCreateType( 'width', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::INTEGER ) )
+            ->setCreateType( 'height', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::INTEGER ) )
+            ->setCreateType( 'thumb', new CreateType( SystemCreateTypes::Object, PhotoSize::class ) )
+            ->setCreateType( 'emoji', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) )
+            ->setCreateType( 'file_size', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::INTEGER ) );
+
+        return $this;
     }
 }

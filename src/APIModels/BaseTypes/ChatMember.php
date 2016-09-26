@@ -8,10 +8,12 @@
 
 namespace TelegramBotLibrary\APIModels\BaseTypes;
 
-use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
-use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
+use TelegramBotLibrary\APIModels\BaseModels\CreateType;
+use TelegramBotLibrary\APIModels\BaseModels\MapDataModel;
+use TelegramBotLibrary\APIModels\Enums\ScalarCreateTypes;
+use TelegramBotLibrary\APIModels\Enums\SystemCreateTypes;
 
-class ChatMember extends BaseModel
+class ChatMember extends MapDataModel
 {
     /**
      * @var User
@@ -23,10 +25,14 @@ class ChatMember extends BaseModel
      */
     public $status;
 
+
+
     protected function configure ( $data )
     {
         $this
-            ->setCreateWithConfiguration( 'user', CreateWithTypes::Object, User::class )
-            ->setCreateWithConfiguration( 'status', CreateWithTypes::Scalar, 'string' );
+            ->setCreateType( 'user', new CreateType( SystemCreateTypes::Object, User::class ) )
+            ->setCreateType( 'status', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) );
+
+        return $this;
     }
 }

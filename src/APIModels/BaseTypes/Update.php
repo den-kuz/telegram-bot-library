@@ -2,10 +2,12 @@
 
 namespace TelegramBotLibrary\APIModels\BaseTypes;
 
-use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
-use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
+use TelegramBotLibrary\APIModels\BaseModels\CreateType;
+use TelegramBotLibrary\APIModels\BaseModels\MapDataModel;
+use TelegramBotLibrary\APIModels\Enums\ScalarCreateTypes;
+use TelegramBotLibrary\APIModels\Enums\SystemCreateTypes;
 
-class Update extends BaseModel
+class Update extends MapDataModel
 {
     /**
      * @var integer
@@ -37,14 +39,18 @@ class Update extends BaseModel
      */
     public $callback_query;
 
+
+
     protected function configure ( $data )
     {
         $this
-            ->setCreateWithConfiguration( 'update_id', CreateWithTypes::Scalar, 'integer' )
-            ->setCreateWithConfiguration( 'message', CreateWithTypes::Object, Message::class )
-            ->setCreateWithConfiguration( 'edited_message', CreateWithTypes::Object, Message::class )
-            ->setCreateWithConfiguration( 'inline_query', CreateWithTypes::Object, InlineQuery::class )
-            ->setCreateWithConfiguration( 'chosen_inline_result', CreateWithTypes::Object, ChosenInlineResult::class )
-            ->setCreateWithConfiguration( 'callback_query', CreateWithTypes::Object, CallbackQuery::class );
+            ->setCreateType( 'update_id', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::INTEGER ) )
+            ->setCreateType( 'message', new CreateType( SystemCreateTypes::Object, Message::class ) )
+            ->setCreateType( 'edited_message', new CreateType( SystemCreateTypes::Object, Message::class ) )
+            ->setCreateType( 'inline_query', new CreateType( SystemCreateTypes::Object, InlineQuery::class ) )
+            ->setCreateType( 'chosen_inline_result', new CreateType( SystemCreateTypes::Object, ChosenInlineResult::class ) )
+            ->setCreateType( 'callback_query', new CreateType( SystemCreateTypes::Object, CallbackQuery::class ) );
+
+        return $this;
     }
 }

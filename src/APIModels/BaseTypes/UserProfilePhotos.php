@@ -8,11 +8,12 @@
 
 namespace TelegramBotLibrary\APIModels\BaseTypes;
 
+use TelegramBotLibrary\APIModels\BaseModels\CreateType;
+use TelegramBotLibrary\APIModels\BaseModels\MapDataModel;
+use TelegramBotLibrary\APIModels\Enums\ScalarCreateTypes;
+use TelegramBotLibrary\APIModels\Enums\SystemCreateTypes;
 
-use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
-use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
-
-class UserProfilePhotos extends BaseModel
+class UserProfilePhotos extends MapDataModel
 {
     /**
      * @var integer
@@ -24,10 +25,14 @@ class UserProfilePhotos extends BaseModel
      */
     public $photos;
 
+
+
     protected function configure ( $data )
     {
         $this
-            ->setCreateWithConfiguration( 'total_count', CreateWithTypes::Scalar, 'integer' )
-            ->setCreateWithConfiguration( 'photos', CreateWithTypes::ArrayOfArrayOfObjects, PhotoSize::class );
+            ->setCreateType( 'total_count', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::INTEGER ) )
+            ->setCreateType( 'photos', new CreateType( SystemCreateTypes::ArrayOfArrayOfObjects, PhotoSize::class ) );
+
+        return $this;
     }
 }

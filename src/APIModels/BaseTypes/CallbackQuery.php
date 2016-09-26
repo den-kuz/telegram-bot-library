@@ -8,10 +8,12 @@
 
 namespace TelegramBotLibrary\APIModels\BaseTypes;
 
-use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
-use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
+use TelegramBotLibrary\APIModels\BaseModels\CreateType;
+use TelegramBotLibrary\APIModels\BaseModels\MapDataModel;
+use TelegramBotLibrary\APIModels\Enums\ScalarCreateTypes;
+use TelegramBotLibrary\APIModels\Enums\SystemCreateTypes;
 
-class CallbackQuery extends BaseModel
+class CallbackQuery extends MapDataModel
 {
     /**
      * @var string
@@ -38,13 +40,17 @@ class CallbackQuery extends BaseModel
      */
     public $data;
 
+
+
     protected function configure ( $data )
     {
         $this
-            ->setCreateWithConfiguration( 'id', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'from', CreateWithTypes::Object, User::class )
-            ->setCreateWithConfiguration( 'message', CreateWithTypes::Object, Message::class )
-            ->setCreateWithConfiguration( 'inline_message_id', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'data', CreateWithTypes::Scalar, 'string' );
+            ->setCreateType( 'id', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) )
+            ->setCreateType( 'from', new CreateType( SystemCreateTypes::Object, User::class ) )
+            ->setCreateType( 'message', new CreateType( SystemCreateTypes::Object, Message::class ) )
+            ->setCreateType( 'inline_message_id', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) )
+            ->setCreateType( 'data', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) );
+
+        return $this;
     }
 }

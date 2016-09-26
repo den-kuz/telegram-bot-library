@@ -8,7 +8,6 @@
 
 namespace TelegramBotLibrary\APIModels\Enums;
 
-
 use TelegramBotLibrary\APIModels\BaseModels\BaseEnum;
 
 class ChatActions extends BaseEnum

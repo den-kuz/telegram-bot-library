@@ -8,11 +8,12 @@
 
 namespace TelegramBotLibrary\APIModels\BaseTypes;
 
+use TelegramBotLibrary\APIModels\BaseModels\CreateType;
+use TelegramBotLibrary\APIModels\BaseModels\MapDataModel;
+use TelegramBotLibrary\APIModels\Enums\ScalarCreateTypes;
+use TelegramBotLibrary\APIModels\Enums\SystemCreateTypes;
 
-use TelegramBotLibrary\APIModels\BaseModels\BaseModel;
-use TelegramBotLibrary\APIModels\BaseModels\CreateWithTypes;
-
-class PhotoSize extends BaseModel
+class PhotoSize extends MapDataModel
 {
     /**
      * @var string
@@ -34,12 +35,16 @@ class PhotoSize extends BaseModel
      */
     public $file_size;
 
+
+
     protected function configure ( $data )
     {
         $this
-            ->setCreateWithConfiguration( 'file_id', CreateWithTypes::Scalar, 'string' )
-            ->setCreateWithConfiguration( 'width', CreateWithTypes::Scalar, 'integer' )
-            ->setCreateWithConfiguration( 'height', CreateWithTypes::Scalar, 'integer' )
-            ->setCreateWithConfiguration( 'file_size', CreateWithTypes::Scalar, 'integer' );
+            ->setCreateType( 'file_id', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::STRING ) )
+            ->setCreateType( 'width', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::INTEGER ) )
+            ->setCreateType( 'height', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::INTEGER ) )
+            ->setCreateType( 'file_size', new CreateType( SystemCreateTypes::Scalar, ScalarCreateTypes::INTEGER ) );
+
+        return $this;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace TelegramBotLibrary\Exceptions;
 
-class TelegramRuntimeException extends TelegramBotException
+class TelegramRuntimeException extends TelegramException
 {
 
     /**
