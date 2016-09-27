@@ -51,12 +51,8 @@ class TelegramBot
     /**
      * TelegramBot constructor.
      *
-     * @param string $token :
-     *                                  Bot token
-     *                                  Токен бота
-     * @param bool $skipPrevUpdates :
-     *                                  If true, skips previous incoming updates
-     *                                  Если True, пропускает предыдущие входящие обновления
+     * @param string $token : Bot token
+     * @param bool $skipPrevUpdates : If true, skips previous incoming updates
      */
     public function __construct ( $token, $skipPrevUpdates = true )
     {
@@ -116,7 +112,7 @@ class TelegramBot
      * @param integer $limit : Limits the number of updates to be retrieved. Values between 1-100 are accepted. Defaults to 100.
      * @param integer $offset : Identifier of the first update to be returned. Must be greater by one than the highest among the identifiers of previously received updates
      *
-     * @return APIModels\BaseTypes\Update[]
+     * @return Update[]
      * @throws TelegramRuntimeException
      */
     public function getUpdates ( $limit = 100, $offset = 0 )
@@ -177,6 +173,128 @@ class TelegramBot
         }
 
         return $this->getUpdates( $limit, (int)$this->lastUpdateID + 1 );
+    }
+
+    // </editor-fold>
+
+    // <editor-fold desc="Getting data (excluding updates)">
+
+    /**
+     * Get user profiles photos
+     *
+     * Use this method to get a list of profile pictures for a user.
+     * Returns a UserProfilePhotos object.
+     *
+     * @param UserProfilePhotosSelector $getUserProfilePhotos
+     *
+     * @return UserProfilePhotos
+     */
+    public function getUserProfilePhotos ( UserProfilePhotosSelector $getUserProfilePhotos )
+    {
+        $getUserProfilePhotos->validateConstraints();
+        $response = $this->requester->query( 'getUserProfilePhotos', $getUserProfilePhotos->toQuery() );
+
+        return new UserProfilePhotos( $response );
+    }
+
+    /**
+     * Get file
+     *
+     * Use this method to get basic info about a file and prepare it for downloading.
+     * For the moment, bots can download files of up to 20MB in size.
+     * The file can then be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>,
+     * where <file_path> is taken from the response. It is guaranteed that the link will be valid for at least 1 hour.
+     * When the link expires, a new one can be requested by calling getFile again.
+     *
+     * On success, a "File" object is returned.
+     *
+     * @param FileSelector $fileSelector
+     *
+     * @return File
+     */
+    public function getFile ( FileSelector $fileSelector )
+    {
+        $fileSelector->validateConstraints();
+        $response = $this->requester->query( 'getFile', $fileSelector->toQuery() );
+
+        return new File( $response );
+    }
+
+    /**
+     * Get chat administrators
+     *
+     * Use this method to get a list of administrators in a chat.
+     * On success, returns an Array of "ChatMember" objects that contains information about all chat administrators except other bots.
+     * If the chat is a group or a supergroup and no administrators were appointed, only the creator will be returned.
+     *
+     * @param ChatSelector $chatSelector
+     *
+     * @return ChatMember[]
+     */
+    public function getChatAdministrators ( ChatSelector $chatSelector )
+    {
+        $chatSelector->validateConstraints();
+        $response = $this->requester->query( 'getChatAdministrators', $chatSelector->toQuery() );
+
+        $members = [];
+        foreach ( $response as $member ) $members[] = new ChatMember( $member );
+
+        return $members;
+    }
+
+    /**
+     * Get chat
+     *
+     * Use this method to get up to date information about the chat
+     * (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
+     *
+     * Returns a "Chat" object on success.
+     *
+     * @param ChatSelector $chatSelector
+     *
+     * @return Chat
+     */
+    public function getChat ( ChatSelector $chatSelector )
+    {
+        $chatSelector->validateConstraints();
+        $response = $this->requester->query( 'getChat', $chatSelector->toQuery() );
+
+        return new Chat( $response );
+    }
+
+    /**
+     * Get chat members count
+     *
+     * Use this method to get the number of members in a chat. Returns Int on success.
+     *
+     * @param ChatSelector $chatSelector
+     *
+     * @return int
+     */
+    public function getChatMembersCount ( ChatSelector $chatSelector )
+    {
+        $chatSelector->validateConstraints();
+        $response = $this->requester->query( 'getChatMembersCount', $chatSelector->toQuery() );
+
+        return $response;
+    }
+
+    /**
+     * Get chat member
+     *
+     * Use this method to get information about a member of a chat.
+     * Returns a "ChatMember" object on success.
+     *
+     * @param ChatMemberSelector $chatMemberSelector
+     *
+     * @return ChatMember
+     */
+    public function getChatMember ( ChatMemberSelector $chatMemberSelector )
+    {
+        $chatMemberSelector->validateConstraints();
+        $response = $this->requester->query( 'getChatMembersCount', $chatMemberSelector->toQuery() );
+
+        return new ChatMember( $response );
     }
 
     // </editor-fold>
@@ -417,153 +535,7 @@ class TelegramBot
 
     // </editor-fold>
 
-    // <editor-fold desc="Getting data (excluding updates)">
-
-    /**
-     * Get user profiles photos
-     *
-     * Use this method to get a list of profile pictures for a user.
-     * Returns a UserProfilePhotos object.
-     *
-     * @param UserProfilePhotosSelector $getUserProfilePhotos
-     *
-     * @return UserProfilePhotos
-     */
-    public function getUserProfilePhotos ( UserProfilePhotosSelector $getUserProfilePhotos )
-    {
-        $getUserProfilePhotos->validateConstraints();
-        $response = $this->requester->query( 'getUserProfilePhotos', $getUserProfilePhotos->toQuery() );
-
-        return new UserProfilePhotos( $response );
-    }
-
-    /**
-     * Get file
-     *
-     * Use this method to get basic info about a file and prepare it for downloading.
-     * For the moment, bots can download files of up to 20MB in size.
-     * The file can then be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>,
-     * where <file_path> is taken from the response. It is guaranteed that the link will be valid for at least 1 hour.
-     * When the link expires, a new one can be requested by calling getFile again.
-     *
-     * On success, a "File" object is returned.
-     *
-     * @param FileSelector $fileSelector
-     *
-     * @return File
-     */
-    public function getFile ( FileSelector $fileSelector )
-    {
-        $fileSelector->validateConstraints();
-        $response = $this->requester->query( 'getFile', $fileSelector->toQuery() );
-
-        return new File( $response );
-    }
-
-    /**
-     * Get chat administrators
-     *
-     * Use this method to get a list of administrators in a chat.
-     * On success, returns an Array of "ChatMember" objects that contains information about all chat administrators except other bots.
-     * If the chat is a group or a supergroup and no administrators were appointed, only the creator will be returned.
-     *
-     * @param ChatSelector $chatSelector
-     *
-     * @return ChatMember[]
-     */
-    public function getChatAdministrators ( ChatSelector $chatSelector )
-    {
-        $chatSelector->validateConstraints();
-        $response = $this->requester->query( 'getChatAdministrators', $chatSelector->toQuery() );
-
-        $members = [];
-        foreach ( $response as $member ) $members[] = new ChatMember( $member );
-
-        return $members;
-    }
-
-    /**
-     * Get chat
-     *
-     * Use this method to get up to date information about the chat
-     * (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
-     *
-     * Returns a "Chat" object on success.
-     *
-     * @param ChatSelector $chatSelector
-     *
-     * @return Chat
-     */
-    public function getChat ( ChatSelector $chatSelector )
-    {
-        $chatSelector->validateConstraints();
-        $response = $this->requester->query( 'getChat', $chatSelector->toQuery() );
-
-        return new Chat( $response );
-    }
-
-    /**
-     * Get chat members count
-     *
-     * Use this method to get the number of members in a chat. Returns Int on success.
-     *
-     * @param ChatSelector $chatSelector
-     *
-     * @return int
-     */
-    public function getChatMembersCount ( ChatSelector $chatSelector )
-    {
-        $chatSelector->validateConstraints();
-        $response = $this->requester->query( 'getChatMembersCount', $chatSelector->toQuery() );
-
-        return $response;
-    }
-
-    /**
-     * Get chat member
-     *
-     * Use this method to get information about a member of a chat.
-     * Returns a "ChatMember" object on success.
-     *
-     * @param ChatMemberSelector $chatMemberSelector
-     *
-     * @return ChatMember
-     */
-    public function getChatMember ( ChatMemberSelector $chatMemberSelector )
-    {
-        $chatMemberSelector->validateConstraints();
-        $response = $this->requester->query( 'getChatMembersCount', $chatMemberSelector->toQuery() );
-
-        return new ChatMember( $response );
-    }
-
-    // </editor-fold>
-
     // <editor-fold desc="Other actions">
-
-    /**
-     * Set webhook
-     *
-     * Use this method to specify a url and receive incoming updates via an outgoing webhook.
-     * Whenever there is an update for the bot, we will send an HTTPS POST request to the specified url,
-     * containing a JSON-serialized Update.
-     *
-     * In case of an unsuccessful request, we will give up after a reasonable amount of attempts.
-     * If you'd like to make sure that the Webhook request comes from Telegram,
-     * we recommend using a secret path in the URL, e.g. https://www.example.com/<token>.
-     * Since nobody else knows your bot‘s token, you can be pretty sure it’s us.
-     *
-     * @param SetWebhook $webhook
-     *
-     * @return array
-     */
-    public function setWebhook ( SetWebhook $webhook )
-    {
-        $webhook->validateConstraints();
-        $response = $this->requester->query( 'setWebhook', $webhook->toQuery( true ), true );
-
-        return $response;
-    }
 
     /**
      * Kick chat member
@@ -701,6 +673,30 @@ class TelegramBot
     // </editor-fold>
 
     // TODO: Inline mode
+
+    /**
+     * Set webhook
+     *
+     * Use this method to specify a url and receive incoming updates via an outgoing webhook.
+     * Whenever there is an update for the bot, we will send an HTTPS POST request to the specified url,
+     * containing a JSON-serialized Update.
+     *
+     * In case of an unsuccessful request, we will give up after a reasonable amount of attempts.
+     * If you'd like to make sure that the Webhook request comes from Telegram,
+     * we recommend using a secret path in the URL, e.g. https://www.example.com/<token>.
+     * Since nobody else knows your bot‘s token, you can be pretty sure it’s us.
+     *
+     * @param SetWebhook $webhook
+     *
+     * @return array
+     */
+    public function setWebhook ( SetWebhook $webhook )
+    {
+        $webhook->validateConstraints();
+        $response = $this->requester->query( 'setWebhook', $webhook->toQuery( true ), true );
+
+        return $response;
+    }
 
     /**
      * Download file from Telegram
