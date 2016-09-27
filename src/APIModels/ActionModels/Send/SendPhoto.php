@@ -14,7 +14,7 @@ use TelegramBotLibrary\APIModels\Constraints\IsInteger;
 use TelegramBotLibrary\APIModels\Constraints\IsObject;
 use TelegramBotLibrary\APIModels\Constraints\IsString;
 use TelegramBotLibrary\APIModels\Constraints\IsStringLength;
-use TelegramBotLibrary\APIModels\FileSystemHelper;
+use TelegramBotLibrary\APIModels\InputFileHelper;
 
 class SendPhoto extends _GeneralSendModel
 {
@@ -35,12 +35,12 @@ class SendPhoto extends _GeneralSendModel
 
     public function setPhotoByPath ( $path, $mime = null, $postname = null )
     {
-        $this->setPhoto( FileSystemHelper::inputFileByPath( $path, $mime, $postname ) );
+        $this->setPhoto( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
     }
 
     public function setPhotoByFileId ( $id )
     {
-        $this->setPhoto( FileSystemHelper::inputFileByFileId( $id ) );
+        $this->setPhoto( InputFileHelper::inputFileByFileId( $id ) );
     }
 
     protected function configure ()

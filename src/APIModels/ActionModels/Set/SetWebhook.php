@@ -13,7 +13,7 @@ use TelegramBotLibrary\APIModels\BaseTypes\InputFile;
 use TelegramBotLibrary\APIModels\Constraints\ConstraintsConfiguration;
 use TelegramBotLibrary\APIModels\Constraints\IsObject;
 use TelegramBotLibrary\APIModels\Constraints\IsString;
-use TelegramBotLibrary\APIModels\FileSystemHelper;
+use TelegramBotLibrary\APIModels\InputFileHelper;
 
 class SetWebhook extends SendModel
 {
@@ -29,7 +29,9 @@ class SetWebhook extends SendModel
 
     public function setCertificateByPath ( $path, $mime = null, $postname = null )
     {
-        $this->setCertificate( FileSystemHelper::inputFileByPath( $path, $mime, $postname ) );
+        $this->setCertificate( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
+
+        return $this;
     }
 
     protected function configure ()

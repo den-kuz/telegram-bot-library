@@ -8,7 +8,7 @@ use TelegramBotLibrary\APIModels\Constraints\ConstraintsConfiguration;
 use TelegramBotLibrary\APIModels\Constraints\IsInteger;
 use TelegramBotLibrary\APIModels\Constraints\IsObject;
 use TelegramBotLibrary\APIModels\Constraints\IsString;
-use TelegramBotLibrary\APIModels\FileSystemHelper;
+use TelegramBotLibrary\APIModels\InputFileHelper;
 
 class SendSticker extends _GeneralSendModel
 {
@@ -24,12 +24,12 @@ class SendSticker extends _GeneralSendModel
 
     public function setStickerByPath ( $path, $mime = null, $postname = null )
     {
-        $this->setSticker( FileSystemHelper::inputFileByPath( $path, $mime, $postname ) );
+        $this->setSticker( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
     }
 
     public function setStickerByFileId ( $id )
     {
-        $this->setSticker( FileSystemHelper::inputFileByFileId( $id ) );
+        $this->setSticker( InputFileHelper::inputFileByFileId( $id ) );
     }
 
     protected function configure ()

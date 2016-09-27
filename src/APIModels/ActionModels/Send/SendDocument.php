@@ -14,7 +14,7 @@ use TelegramBotLibrary\APIModels\Constraints\IsInteger;
 use TelegramBotLibrary\APIModels\Constraints\IsObject;
 use TelegramBotLibrary\APIModels\Constraints\IsString;
 use TelegramBotLibrary\APIModels\Constraints\IsStringLength;
-use TelegramBotLibrary\APIModels\FileSystemHelper;
+use TelegramBotLibrary\APIModels\InputFileHelper;
 
 class SendDocument extends _GeneralSendModel
 {
@@ -35,12 +35,12 @@ class SendDocument extends _GeneralSendModel
 
     public function setDocumentByPath ( $path, $mime = null, $postname = null )
     {
-        $this->setDocument( FileSystemHelper::inputFileByPath( $path, $mime, $postname ) );
+        $this->setDocument( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
     }
 
     public function setDocumentByFileId ( $id )
     {
-        $this->setDocument( FileSystemHelper::inputFileByFileId( $id ) );
+        $this->setDocument( InputFileHelper::inputFileByFileId( $id ) );
     }
 
     protected function configure ()

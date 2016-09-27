@@ -8,7 +8,6 @@
 
 namespace TelegramBotLibrary;
 
-use TelegramBotLibrary\APIModels\FileSystemHelper;
 use TelegramBotLibrary\Exceptions\HTTPException;
 use TelegramBotLibrary\Exceptions\TelegramException;
 use TelegramBotLibrary\Exceptions\TelegramRuntimeException;

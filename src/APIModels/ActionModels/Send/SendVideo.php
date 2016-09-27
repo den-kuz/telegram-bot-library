@@ -15,7 +15,7 @@ use TelegramBotLibrary\APIModels\Constraints\IsInteger;
 use TelegramBotLibrary\APIModels\Constraints\IsObject;
 use TelegramBotLibrary\APIModels\Constraints\IsString;
 use TelegramBotLibrary\APIModels\Constraints\IsStringLength;
-use TelegramBotLibrary\APIModels\FileSystemHelper;
+use TelegramBotLibrary\APIModels\InputFileHelper;
 
 class SendVideo extends _GeneralSendModel
 {
@@ -51,12 +51,12 @@ class SendVideo extends _GeneralSendModel
 
     public function setVideoByPath ( $path, $mime = null, $postname = null )
     {
-        $this->setVideo( FileSystemHelper::inputFileByPath( $path, $mime, $postname ) );
+        $this->setVideo( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
     }
 
     public function setVideoByFileId ( $id )
     {
-        $this->setVideo( FileSystemHelper::inputFileByFileId( $id ) );
+        $this->setVideo( InputFileHelper::inputFileByFileId( $id ) );
     }
 
     protected function configure ()

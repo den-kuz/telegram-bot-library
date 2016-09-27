@@ -9,7 +9,7 @@ use TelegramBotLibrary\APIModels\Constraints\IsInteger;
 use TelegramBotLibrary\APIModels\Constraints\IsObject;
 use TelegramBotLibrary\APIModels\Constraints\IsString;
 use TelegramBotLibrary\APIModels\Constraints\IsStringLength;
-use TelegramBotLibrary\APIModels\FileSystemHelper;
+use TelegramBotLibrary\APIModels\InputFileHelper;
 
 class SendVoice extends _GeneralSendModel
 {
@@ -35,12 +35,12 @@ class SendVoice extends _GeneralSendModel
 
     public function setVoiceByPath ( $path, $mime = null, $postname = null )
     {
-        $this->setVoice( FileSystemHelper::inputFileByPath( $path, $mime, $postname ) );
+        $this->setVoice( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
     }
 
     public function setVoiceByFileId ( $id )
     {
-        $this->setVoice( FileSystemHelper::inputFileByFileId( $id ) );
+        $this->setVoice( InputFileHelper::inputFileByFileId( $id ) );
     }
 
     protected function configure ()
