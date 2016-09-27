@@ -48,6 +48,7 @@ class TelegramBot
 
     protected $lastUpdateID = 0;
 
+
     /**
      * TelegramBot constructor.
      *
@@ -61,6 +62,26 @@ class TelegramBot
 
         $this->botUser = $this->getMe();
         if ( $skipPrevUpdates ) $this->skipUpdates();
+    }
+
+    /**
+     * Get bot token
+     *
+     * @return string
+     */
+    public function getBotToken ()
+    {
+        return $this->botToken;
+    }
+
+    /**
+     * Get last received update ID
+     *
+     * @return int
+     */
+    public function getLastUpdateID ()
+    {
+        return $this->lastUpdateID;
     }
 
     /**
@@ -81,27 +102,8 @@ class TelegramBot
 
         return $this->botUser;
     }
-
-    /**
-     * Skip previous incoming updates
-     *
-     * This method skips all previous incoming updates and saves last update ID in field "lastUpdateID"
-     * If parameter "$specific_id" specified - method skips previous updates before this ID
-     *
-     * @param integer $specific_id
-     */
-    protected function skipUpdates ( $specific_id = null )
-    {
-        if ( $specific_id === null ) {
-            $lastUpdate = $this->getUpdates( 1, -1 );
-            $latestId = isset( $lastUpdate[ 0 ]->update_id ) ? $lastUpdate[ 0 ]->update_id : 0;
-        } else {
-            $latestId = $specific_id;
-        }
-
-        $this->getUpdates( 1, (int)$latestId + 1 );
-        $this->lastUpdateID = $latestId;
-    }
+    
+    // <editor-fold defaultstate="collapsed" desc="Getting updates">
 
     /**
      * Get incoming updates
@@ -135,28 +137,6 @@ class TelegramBot
         return $updatesArray;
     }
 
-    // <editor-fold defaultstate="collapsed" desc="Getting updates">
-
-    /**
-     * Get bot token
-     *
-     * @return string
-     */
-    public function getBotToken ()
-    {
-        return $this->botToken;
-    }
-
-    /**
-     * Get last received update ID
-     *
-     * @return int
-     */
-    public function getLastUpdateID ()
-    {
-        return $this->lastUpdateID;
-    }
-
     /**
      * Get last incomig updates
      *
@@ -173,6 +153,27 @@ class TelegramBot
         }
 
         return $this->getUpdates( $limit, (int)$this->lastUpdateID + 1 );
+    }
+
+    /**
+     * Skip previous incoming updates
+     *
+     * This method skips all previous incoming updates and saves last update ID in field "lastUpdateID"
+     * If parameter "$specific_id" specified - method skips previous updates before this ID
+     *
+     * @param integer $specific_id
+     */
+    protected function skipUpdates ( $specific_id = null )
+    {
+        if ( $specific_id === null ) {
+            $lastUpdate = $this->getUpdates( 1, -1 );
+            $latestId = isset( $lastUpdate[ 0 ]->update_id ) ? $lastUpdate[ 0 ]->update_id : 0;
+        } else {
+            $latestId = $specific_id;
+        }
+
+        $this->getUpdates( 1, (int)$latestId + 1 );
+        $this->lastUpdateID = $latestId;
     }
 
     // </editor-fold>
