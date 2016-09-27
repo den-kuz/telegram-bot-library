@@ -48,6 +48,7 @@ class TelegramBot
 
     protected $lastUpdateID = 0;
 
+
     /**
      * TelegramBot constructor.
      *
