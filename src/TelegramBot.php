@@ -51,39 +51,48 @@ class TelegramBot
     /**
      * TelegramBot constructor.
      *
-     * @param      $token - Токен бота
-     * @param bool $skipPrevUpdates - пропустить предыдущие обновления, если они есть
+     * @param string $token :
+     *                                  Bot token
+     *                                  Токен бота
+     * @param bool $skipPrevUpdates :
+     *                                  If true, skips previous incoming updates
+     *                                  Если True, пропускает предыдущие входящие обновления
      */
     public function __construct ( $token, $skipPrevUpdates = true )
     {
         $this->botToken = $token;
-        $this->request = new APIRequester( $this );
+        $this->requester = new APIRequest( $token );
 
         $this->botUser = $this->getMe();
         if ( $skipPrevUpdates ) $this->skipUpdates();
     }
 
-    // <editor-fold defaultstate="collapsed" desc="Работа с обновлениями">
-
     /**
-     * Возвращает информацию о боте в классе User
+     * Get information about the bot
+     *
+     * A simple method for testing your bot's auth token
+     * Requires no parameters. Returns basic information about the bot in form of a "User" object
+     *
+     * @param bool $forceUpdate : Force update information about the bot.
      *
      * @return User
      */
-    public function getMe ()
+    public function getMe ( $forceUpdate = false )
     {
-        if ( !$this->botUser ) {
-            $getMeResult = $this->request->query( 'getMe' );
-            $this->botUser = new User( $getMeResult );
+        if ( !$this->botUser || $forceUpdate ) {
+            $this->botUser = new User( $this->requester->query( 'getMe' ) );
         }
 
         return $this->botUser;
     }
 
     /**
-     * Пропускает все предыдущие апдейты и записывает ID последнего
+     * Skip previous incoming updates
      *
-     * @param null $specific_id
+     * This method skips all previous incoming updates and saves last update ID in field "lastUpdateID"
+     * If parameter "$specific_id" specified - method skips previous updates before this ID
+     *
+     * @param integer $specific_id
      */
     protected function skipUpdates ( $specific_id = null )
     {
@@ -99,17 +108,25 @@ class TelegramBot
     }
 
     /**
-     * Вовзращает массив апдейтов, которые были посланы боту
-     * Не работает если у бота установлен web-hook (возвращает пустой массив)
+     * Get incoming updates
      *
-     * @param int $limit - количество получаемых апдейтов от 1 до 100
-     * @param int $offset - ID апдейта, начиная с которого получать
+     * Use this method to receive incoming updates.
+     * An Array of objects of class "Update" is returned.
      *
-     * @return Update[]
+     * @param integer $limit : Limits the number of updates to be retrieved. Values between 1-100 are accepted. Defaults to 100.
+     * @param integer $offset : Identifier of the first update to be returned. Must be greater by one than the highest among the identifiers of previously received updates
+     *
+     * @return APIModels\BaseTypes\Update[]
+     * @throws TelegramRuntimeException
      */
     public function getUpdates ( $limit = 100, $offset = 0 )
     {
-        $updates = $this->request->query( 'getUpdates', [ 'limit' => $limit, 'offset' => $offset ] );
+        $inMinMax = new IsIntegerMinMax( 1, 100 );
+        if ( !$inMinMax->isValid( $limit ) ) {
+            throw new TelegramRuntimeException( 'Parameter limit must be an ' . $inMinMax->getDescription() );
+        }
+
+        $updates = $this->requester->query( 'getUpdates', [ 'limit' => $limit, 'offset' => $offset ] );
 
         $updatesArray = [];
         if ( !empty( $updates ) ) {
@@ -122,16 +139,34 @@ class TelegramBot
         return $updatesArray;
     }
 
-    // </editor-fold>
-
-    // <editor-fold desc="Отправка данных">
+    // <editor-fold defaultstate="collapsed" desc="Getting updates">
 
     /**
-     * Получает последние обновления, максимум 100
+     * Get bot token
      *
-     * @param int $limit - количество получаемых обновлений
+     * @return string
+     */
+    public function getBotToken ()
+    {
+        return $this->botToken;
+    }
+
+    /**
+     * Get last received update ID
      *
-     * @return APIModels\BaseTypes\Update[]
+     * @return int
+     */
+    public function getLastUpdateID ()
+    {
+        return $this->lastUpdateID;
+    }
+
+    /**
+     * Get last incomig updates
+     *
+     * @param integer $limit : Limits the number of updates to be retrieved. Values between 1-100 are accepted. Defaults to 100.
+     *
+     * @return Update[]
      * @throws TelegramRuntimeException
      */
     public function getLastUpdates ( $limit = 100 )
@@ -144,8 +179,16 @@ class TelegramBot
         return $this->getUpdates( $limit, (int)$this->lastUpdateID + 1 );
     }
 
+    // </editor-fold>
+
+    // <editor-fold desc="Sending data">
+
     /**
-     * Отправляет сообщение
+     * Send text message
+     *
+     * Use this method to send text message.
+     *
+     * On success, the sent message is returned as object of class "Message"
      *
      * @param SendMessage $message
      *
@@ -154,13 +197,17 @@ class TelegramBot
     public function sendMessage ( SendMessage $message )
     {
         $message->validateConstraints();
-        $response = $this->request->query( 'sendMessage', $message->toQuery() );
+        $response = $this->requester->query( 'sendMessage', $message->toQuery() );
 
         return new Message( $response );
     }
 
     /**
-     * Переотправляет (цитирует) сообщение
+     * Forvard message
+     *
+     * Use this method to forward messages of any kind.
+     *
+     * On success, the sent message is returned as object of class "Message"
      *
      * @param ForwardMessage $forwardMessage
      *
@@ -169,13 +216,17 @@ class TelegramBot
     public function forwardMessage ( ForwardMessage $forwardMessage )
     {
         $forwardMessage->validateConstraints();
-        $response = $this->request->query( 'forwardMessage', $forwardMessage->toQuery() );
+        $response = $this->requester->query( 'forwardMessage', $forwardMessage->toQuery() );
 
         return new Message( $response );
     }
 
     /**
-     * Отправляет фото
+     * Send photo
+     *
+     * Use this method to send photos.
+     *
+     * On success, the sent message is returned as object of class "Message"
      *
      * @param SendPhoto $photo
      *
@@ -184,13 +235,19 @@ class TelegramBot
     public function sendPhoto ( SendPhoto $photo )
     {
         $photo->validateConstraints();
-        $response = $this->request->query( 'sendPhoto', $photo->toQuery() );
+        $response = $this->requester->query( 'sendPhoto', $photo->toQuery() );
 
         return new Message( $response );
     }
 
     /**
-     * Отправляет аудио файл
+     * Send audio
+     *
+     * Use this method to send audio files, if you want Telegram clients to display them in the music player.
+     * Your audio must be in the .mp3 format. Bots can currently send audio files of up to 50 MB in size,
+     * this limit may be changed in the future.
+     *
+     * On success, the sent message is returned as object of class "Message"
      *
      * @param SendAudio $audio
      *
@@ -199,13 +256,18 @@ class TelegramBot
     public function sendAudio ( SendAudio $audio )
     {
         $audio->validateConstraints();
-        $response = $this->request->query( 'sendAudio', $audio->toQuery() );
+        $response = $this->requester->query( 'sendAudio', $audio->toQuery() );
 
         return new Message( $response );
     }
 
     /**
-     * Отправляет документ
+     * Send document
+     *
+     * Use this method to send general files.
+     * Bots can currently send files of any type of up to 50 MB in size, this limit may be changed in the future.
+     *
+     * On success, the sent message is returned as object of class "Message"
      *
      * @param SendDocument $document
      *
@@ -214,13 +276,17 @@ class TelegramBot
     public function sendDocument ( SendDocument $document )
     {
         $document->validateConstraints();
-        $response = $this->request->query( 'sendDocument', $document->toQuery() );
+        $response = $this->requester->query( 'sendDocument', $document->toQuery() );
 
         return new Message( $response );
     }
 
     /**
-     * Отправляет стикер в формате .webm
+     * Send sticker
+     *
+     * Use this method to send .webp stickers.
+     *
+     * On success, the sent message is returned as object of class "Message"
      *
      * @param SendSticker $sticker
      *
@@ -229,13 +295,18 @@ class TelegramBot
     public function sendSticker ( SendSticker $sticker )
     {
         $sticker->validateConstraints();
-        $response = $this->request->query( 'sendSticker', $sticker->toQuery() );
+        $response = $this->requester->query( 'sendSticker', $sticker->toQuery() );
 
         return new Message( $response );
     }
 
     /**
-     * Отправляет видео в формате .mp4
+     * Send video
+     *
+     * Use this method to send video files, Telegram clients support mp4 videos (other formats may be sent as Document).
+     * Bots can currently send video files of up to 50 MB in size, this limit may be changed in the future.
+     *
+     * On success, the sent message is returned as object of class "Message"
      *
      * @param SendVideo $video
      *
@@ -244,13 +315,19 @@ class TelegramBot
     public function sendVideo ( SendVideo $video )
     {
         $video->validateConstraints();
-        $response = $this->request->query( 'sendVideo', $video->toQuery() );
+        $response = $this->requester->query( 'sendVideo', $video->toQuery() );
 
         return new Message( $response );
     }
 
     /**
-     * Отправляет голосовое сообщение в формате .ogg и кодеком OPUS
+     * Send voice message
+     *
+     * Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message.
+     * For this to work, your audio must be in an .ogg file encoded with OPUS (other formats may be sent as Audio or Document).
+     * Bots can currently send voice messages of up to 50 MB in size, this limit may be changed in the future.
+     *
+     * On success, the sent message is returned as object of class "Message"
      *
      * @param SendVoice $voice
      *
@@ -259,13 +336,17 @@ class TelegramBot
     public function sendVoice ( SendVoice $voice )
     {
         $voice->validateConstraints();
-        $response = $this->request->query( 'sendVoice', $voice->toQuery() );
+        $response = $this->requester->query( 'sendVoice', $voice->toQuery() );
 
         return new Message( $response );
     }
 
     /**
-     * Отправляет геопозицию
+     * Send location
+     *
+     * Use this method to send point on the map.
+     *
+     * On success, the sent message is returned as object of class "Message"
      *
      * @param SendLocation $location
      *
@@ -274,13 +355,17 @@ class TelegramBot
     public function sendLocation ( SendLocation $location )
     {
         $location->validateConstraints();
-        $response = $this->request->query( 'sendLocation', $location->toQuery() );
+        $response = $this->requester->query( 'sendLocation', $location->toQuery() );
 
         return new Message( $response );
     }
 
     /**
-     * Отправляет Venue - позицию с описанием и названием
+     * Send venue
+     *
+     * Use this method to send information about a venue.
+     *
+     * On success, the sent message is returned as object of class "Message"
      *
      * @param SendVenue $venue
      *
@@ -289,13 +374,17 @@ class TelegramBot
     public function sendVenue ( SendVenue $venue )
     {
         $venue->validateConstraints();
-        $response = $this->request->query( 'sendVenue', $venue->toQuery() );
+        $response = $this->requester->query( 'sendVenue', $venue->toQuery() );
 
         return new Message( $response );
     }
 
     /**
-     * Отправляет контакт
+     * Send contact
+     *
+     * Use this method to send phone contacts.
+     *
+     * On success, the sent message is returned as object of class "Message"
      *
      * @param SendContact $contact
      *
@@ -304,17 +393,16 @@ class TelegramBot
     public function sendContact ( SendContact $contact )
     {
         $contact->validateConstraints();
-        $response = $this->request->query( 'sendContact', $contact->toQuery() );
+        $response = $this->requester->query( 'sendContact', $contact->toQuery() );
 
         return new Message( $response );
     }
 
-    // </editor-fold>
-
-    // <editor-fold desc="Получение данных (исключая обновления)">
-
     /**
-     * Отправляет в чат команду о том, что делает бот
+     * Send chat action
+     *
+     * Use this method when you need to tell the user that something is happening on the bot's side.
+     * The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status).
      *
      * @param SendChatAction $chatAction
      *
@@ -322,13 +410,20 @@ class TelegramBot
      */
     public function sendChatAction ( SendChatAction $chatAction )
     {
-        $response = $this->request->query( 'sendChatAction', $chatAction->toQuery() );
+        $response = $this->requester->query( 'sendChatAction', $chatAction->toQuery() );
 
         return $response;
     }
 
+    // </editor-fold>
+
+    // <editor-fold desc="Getting data (excluding updates)">
+
     /**
-     * Получает фотографии профиля пользователя. Каждая фотография в 4-х размерах
+     * Get user profiles photos
+     *
+     * Use this method to get a list of profile pictures for a user.
+     * Returns a UserProfilePhotos object.
      *
      * @param UserProfilePhotosSelector $getUserProfilePhotos
      *
@@ -337,13 +432,21 @@ class TelegramBot
     public function getUserProfilePhotos ( UserProfilePhotosSelector $getUserProfilePhotos )
     {
         $getUserProfilePhotos->validateConstraints();
-        $response = $this->request->query( 'getUserProfilePhotos', $getUserProfilePhotos->toQuery() );
+        $response = $this->requester->query( 'getUserProfilePhotos', $getUserProfilePhotos->toQuery() );
 
         return new UserProfilePhotos( $response );
     }
 
     /**
-     * Получает информацию о файле по его ID
+     * Get file
+     *
+     * Use this method to get basic info about a file and prepare it for downloading.
+     * For the moment, bots can download files of up to 20MB in size.
+     * The file can then be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>,
+     * where <file_path> is taken from the response. It is guaranteed that the link will be valid for at least 1 hour.
+     * When the link expires, a new one can be requested by calling getFile again.
+     *
+     * On success, a "File" object is returned.
      *
      * @param FileSelector $fileSelector
      *
@@ -352,13 +455,17 @@ class TelegramBot
     public function getFile ( FileSelector $fileSelector )
     {
         $fileSelector->validateConstraints();
-        $response = $this->request->query( 'getFile', $fileSelector->toQuery() );
+        $response = $this->requester->query( 'getFile', $fileSelector->toQuery() );
 
         return new File( $response );
     }
 
     /**
-     * Получает список администраторов чата
+     * Get chat administrators
+     *
+     * Use this method to get a list of administrators in a chat.
+     * On success, returns an Array of "ChatMember" objects that contains information about all chat administrators except other bots.
+     * If the chat is a group or a supergroup and no administrators were appointed, only the creator will be returned.
      *
      * @param ChatSelector $chatSelector
      *
@@ -367,7 +474,7 @@ class TelegramBot
     public function getChatAdministrators ( ChatSelector $chatSelector )
     {
         $chatSelector->validateConstraints();
-        $response = $this->request->query( 'getChatAdministrators', $chatSelector->toQuery() );
+        $response = $this->requester->query( 'getChatAdministrators', $chatSelector->toQuery() );
 
         $members = [];
         foreach ( $response as $member ) $members[] = new ChatMember( $member );
@@ -376,7 +483,12 @@ class TelegramBot
     }
 
     /**
-     * Получает информацию о чате по ID
+     * Get chat
+     *
+     * Use this method to get up to date information about the chat
+     * (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
+     *
+     * Returns a "Chat" object on success.
      *
      * @param ChatSelector $chatSelector
      *
@@ -385,13 +497,15 @@ class TelegramBot
     public function getChat ( ChatSelector $chatSelector )
     {
         $chatSelector->validateConstraints();
-        $response = $this->request->query( 'getChat', $chatSelector->toQuery() );
+        $response = $this->requester->query( 'getChat', $chatSelector->toQuery() );
 
         return new Chat( $response );
     }
 
     /**
-     * Вовзращает количество участников чата
+     * Get chat members count
+     *
+     * Use this method to get the number of members in a chat. Returns Int on success.
      *
      * @param ChatSelector $chatSelector
      *
@@ -400,13 +514,16 @@ class TelegramBot
     public function getChatMembersCount ( ChatSelector $chatSelector )
     {
         $chatSelector->validateConstraints();
-        $response = $this->request->query( 'getChatMembersCount', $chatSelector->toQuery() );
+        $response = $this->requester->query( 'getChatMembersCount', $chatSelector->toQuery() );
 
         return $response;
     }
 
     /**
-     * Возвращает информацию об участнике чата
+     * Get chat member
+     *
+     * Use this method to get information about a member of a chat.
+     * Returns a "ChatMember" object on success.
      *
      * @param ChatMemberSelector $chatMemberSelector
      *
@@ -415,17 +532,26 @@ class TelegramBot
     public function getChatMember ( ChatMemberSelector $chatMemberSelector )
     {
         $chatMemberSelector->validateConstraints();
-        $response = $this->request->query( 'getChatMembersCount', $chatMemberSelector->toQuery() );
+        $response = $this->requester->query( 'getChatMembersCount', $chatMemberSelector->toQuery() );
 
         return new ChatMember( $response );
     }
 
     // </editor-fold>
 
-    // <editor-fold desc="Другие действия">
+    // <editor-fold desc="Other actions">
 
     /**
-     * Устанавливает WebHook
+     * Set webhook
+     *
+     * Use this method to specify a url and receive incoming updates via an outgoing webhook.
+     * Whenever there is an update for the bot, we will send an HTTPS POST request to the specified url,
+     * containing a JSON-serialized Update.
+     *
+     * In case of an unsuccessful request, we will give up after a reasonable amount of attempts.
+     * If you'd like to make sure that the Webhook request comes from Telegram,
+     * we recommend using a secret path in the URL, e.g. https://www.example.com/<token>.
+     * Since nobody else knows your bot‘s token, you can be pretty sure it’s us.
      *
      * @param SetWebhook $webhook
      *
@@ -434,99 +560,142 @@ class TelegramBot
     public function setWebhook ( SetWebhook $webhook )
     {
         $webhook->validateConstraints();
-        $response = $this->request->query( 'setWebhook', $webhook->toQuery( true ), true );
+        $response = $this->requester->query( 'setWebhook', $webhook->toQuery( true ), true );
 
         return $response;
     }
 
     /**
-     * Кикает участника группы
+     * Kick chat member
+     *
+     * Use this method to kick a user from a group or a supergroup.
+     * In the case of supergroups, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
+     * The bot must be an administrator in the group for this to work.
+     *
+     * Note: This will method only work if the ‘All Members Are Admins’ setting is off in the target group.
+     * Otherwise members may only be removed by the group's creator or by the member that added them.
+     *
+     * Returns True on success.
      *
      * @param ChatMemberSelector $chatMemberSelector
      *
-     * @return array
+     * @return boolean
      */
     public function kickChatMember ( ChatMemberSelector $chatMemberSelector )
     {
         $chatMemberSelector->validateConstraints();
-        $response = $this->request->query( 'kickChatMember', $chatMemberSelector->toQuery() );
+        $response = $this->requester->query( 'kickChatMember', $chatMemberSelector->toQuery() );
 
         return $response;
     }
 
     /**
-     * Заставляет бота покинуть группу
+     * Leave chat
+     *
+     * Use this method for your bot to leave a group, supergroup or channel.
+     *
+     * Returns True on success.
      *
      * @param ChatSelector $chatSelector
      *
-     * @return array
+     * @return boolean
      */
     public function leaveChat ( ChatSelector $chatSelector )
     {
         $chatSelector->validateConstraints();
-        $response = $this->request->query( 'leaveChat', $chatSelector->toQuery() );
+        $response = $this->requester->query( 'leaveChat', $chatSelector->toQuery() );
 
         return $response;
     }
 
     /**
-     * Разбанивает участнигра группы
+     * Unban chat member
+     *
+     * Use this method to unban a previously kicked user in a supergroup.
+     * The user will not return to the group automatically, but will be able to join via link, etc.
+     * The bot must be an administrator in the group for this to work.
+     *
+     * Returns True on success.
      *
      * @param ChatMemberSelector $chatMemberSelector
      *
-     * @return array
+     * @return boolean
      */
     public function unbanChatMember ( ChatMemberSelector $chatMemberSelector )
     {
         $chatMemberSelector->validateConstraints();
-        $response = $this->request->query( 'unbanChatMember', $chatMemberSelector->toQuery() );
+        $response = $this->requester->query( 'unbanChatMember', $chatMemberSelector->toQuery() );
 
         return $response;
     }
 
     /**
-     * Редактирует текст сообщения
+     * Edit message text
+     *
+     * Use this method to edit text messages sent by the bot or via the bot (for inline bots).
+     *
+     * On success, if edited message is sent by the bot, the edited Message is returned, otherwise True is returned.
      *
      * @param EditMessageText $editMessageText
      *
-     * @return array
+     * @return Message|boolean
      */
     public function editMessageText ( EditMessageText $editMessageText )
     {
         $editMessageText->validateConstraints();
-        $response = $this->request->query( 'editMessageText', $editMessageText->toQuery() );
+        $response = $this->requester->query( 'editMessageText', $editMessageText->toQuery() );
 
-        return $response;
+        if ( is_array( $response ) ) {
+            return new Message( $response );
+        } else {
+            return $response;
+        }
     }
 
     /**
-     * Редактирует описание сообщения
+     * Edit message caption
+     *
+     * Use this method to edit captions of messages sent by the bot or via the bot (for inline bots).
+     *
+     * On success, if edited message is sent by the bot, the edited Message is returned, otherwise True is returned.
      *
      * @param EditMessageCaption $editMessageCaption
      *
-     * @return array
+     * @return Message|boolean
      */
     public function editMessageCaption ( EditMessageCaption $editMessageCaption )
     {
         $editMessageCaption->validateConstraints();
-        $response = $this->request->query( 'editMessageCaption', $editMessageCaption->toQuery() );
+        $response = $this->requester->query( 'editMessageCaption', $editMessageCaption->toQuery() );
 
-        return $response;
+        if ( is_array( $response ) ) {
+            return new Message( $response );
+        } else {
+            return $response;
+        }
     }
 
     /**
-     * Редактирует клавиатуру сообщения
+     * Edit message reply markup
+     *
+     * Use this method to edit only the reply markup of messages sent by the bot or via the bot (for inline bots).
+     *
+     * On success, if edited message is sent by the bot, the edited Message is returned, otherwise True is returned.
      *
      * @param EditMessageReplyMarkup $editMessageReplyMarkup
      *
-     * @return array
+     * @return Message|boolean
      */
     public function editMessageReplyMarkup ( EditMessageReplyMarkup $editMessageReplyMarkup )
     {
         $editMessageReplyMarkup->validateConstraints();
-        $response = $this->request->query( 'editMessageReplyMarkup', $editMessageReplyMarkup->toQuery() );
+        $response = $this->requester->query( 'editMessageReplyMarkup', $editMessageReplyMarkup->toQuery() );
 
-        return $response;
+        if ( is_array( $response ) ) {
+            return new Message( $response );
+        } else {
+            return $response;
+        }
     }
 
     // </editor-fold>
@@ -534,38 +703,17 @@ class TelegramBot
     // TODO: Inline mode
 
     /**
-     * Получить токен бота
+     * Download file from Telegram
+     *
+     * @param string $serverPath
+     * @param string $saveDir
+     * @param string $saveFilename
+     * @param string $saveFileExtension
      *
      * @return string
      */
-    public function getBotToken ()
+    public function downloadTelegramFile ( $serverPath, $saveDir = './', $saveFilename = null, $saveFileExtension = null )
     {
-        return $this->botToken;
+        return $this->requester->downloadTelegramFile( $serverPath, $saveDir, $saveFilename, $saveFileExtension );
     }
-
-    /**
-     * Получить ID последнего полученного апдейта
-     *
-     * @return int
-     */
-    public function getLastUpdateID ()
-    {
-        return $this->lastUpdateID;
-    }
-
-    /**
-     * Скачивает файл
-     *
-     * @param             $serverPath - путь на сервере
-     * @param             $saveDir - папка сохранения
-     * @param null|string $saveName = имя файла для сохранения
-     * @param null|bool $hashedName = захешировать имя и контент файла
-     *
-     * @return string
-     */
-    public function downloadFile ( $serverPath, $saveDir, $saveName = null, $hashedName = true )
-    {
-        return $this->request->downloadTelegramFile( $serverPath, $saveDir, $saveName, $hashedName );
-    }
-
 }
