@@ -699,6 +699,16 @@ class TelegramBot
         return $response;
     }
 
+    public function generateSimpleCertificateAndSetAsWebhok ( $url, $serverName )
+    {
+        $paths = SSLCertificateGenerator::generate( $serverName );
+
+        $setWh = new SetWebhook();
+        $setWh->setCertificateByPath( $paths[ 'certificatePath' ] )->setUrl( $url );
+
+        return $this->setWebhook( $setWh );
+    }
+
     /**
      * Download file from Telegram
      *
