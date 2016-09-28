@@ -699,7 +699,7 @@ class TelegramBot
         return $response;
     }
 
-    public function generateSimpleCertificateAndSetAsWebhok ( $url, $serverName )
+    public function generateSimpleCertificateAndSetAsWebhook ( $url, $serverName )
     {
         $paths = SSLCertificateGenerator::generate( $serverName );
 
