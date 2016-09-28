@@ -6,7 +6,7 @@
  * Time: 11:43
  */
 
-namespace SSLCertificateGenerator;
+namespace TelegramBotLibrary;
 
 trait SSLCertificateGenerator
 {
