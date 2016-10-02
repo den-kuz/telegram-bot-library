@@ -115,7 +115,7 @@ class SendMessage extends _GeneralSendModel
      *
      * @return SendMessage
      */
-    public function setParseMode ( string $parse_mode )
+    public function setParseMode ( $parse_mode )
     {
         $this->parse_mode = $parse_mode;
 

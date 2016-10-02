@@ -44,12 +44,12 @@ class SendAudio extends _GeneralSendModel
 
     public function setAudioByPath ( $path, $mime = null, $postname = null )
     {
-        $this->setAudio( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
+        return $this->setAudio( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
     }
 
     public function setAudioById ( $id )
     {
-        $this->setAudio( InputFileHelper::inputFileByFileId( $id ) );
+        return $this->setAudio( InputFileHelper::inputFileByFileId( $id ) );
     }
 
     protected function configure ()

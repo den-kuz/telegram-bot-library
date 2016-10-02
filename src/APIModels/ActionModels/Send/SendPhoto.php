@@ -35,12 +35,12 @@ class SendPhoto extends _GeneralSendModel
 
     public function setPhotoByPath ( $path, $mime = null, $postname = null )
     {
-        $this->setPhoto( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
+        return $this->setPhoto( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
     }
 
     public function setPhotoByFileId ( $id )
     {
-        $this->setPhoto( InputFileHelper::inputFileByFileId( $id ) );
+        return $this->setPhoto( InputFileHelper::inputFileByFileId( $id ) );
     }
 
     protected function configure ()

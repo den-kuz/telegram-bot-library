@@ -51,12 +51,12 @@ class SendVideo extends _GeneralSendModel
 
     public function setVideoByPath ( $path, $mime = null, $postname = null )
     {
-        $this->setVideo( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
+        return $this->setVideo( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
     }
 
     public function setVideoByFileId ( $id )
     {
-        $this->setVideo( InputFileHelper::inputFileByFileId( $id ) );
+        return $this->setVideo( InputFileHelper::inputFileByFileId( $id ) );
     }
 
     protected function configure ()

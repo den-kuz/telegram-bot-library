@@ -29,9 +29,7 @@ class SetWebhook extends SendModel
 
     public function setCertificateByPath ( $path, $mime = null, $postname = null )
     {
-        $this->setCertificate( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
-
-        return $this;
+        return $this->setCertificate( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
     }
 
     protected function configure ()

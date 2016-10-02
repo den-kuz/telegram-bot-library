@@ -57,10 +57,14 @@ class SendContact extends _GeneralSendModel
 
     /**
      * @param int|string $chat_id
+     *
+     * @return $this
      */
     public function setChatId ( $chat_id )
     {
         $this->chat_id = $chat_id;
+
+        return $this;
     }
 
     /**
@@ -73,10 +77,14 @@ class SendContact extends _GeneralSendModel
 
     /**
      * @param string $phone_number
+     *
+     * @return $this
      */
     public function setPhoneNumber ( $phone_number )
     {
         $this->phone_number = $phone_number;
+
+        return $this;
     }
 
     /**
@@ -89,10 +97,14 @@ class SendContact extends _GeneralSendModel
 
     /**
      * @param string $first_name
+     *
+     * @return $this
      */
     public function setFirstName ( $first_name )
     {
         $this->first_name = $first_name;
+
+        return $this;
     }
 
     /**
@@ -105,10 +117,14 @@ class SendContact extends _GeneralSendModel
 
     /**
      * @param string $last_name
+     *
+     * @return $this
      */
     public function setLastName ( $last_name )
     {
         $this->last_name = $last_name;
+
+        return $this;
     }
 
     protected function configure ()

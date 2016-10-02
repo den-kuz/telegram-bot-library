@@ -24,12 +24,12 @@ class SendSticker extends _GeneralSendModel
 
     public function setStickerByPath ( $path, $mime = null, $postname = null )
     {
-        $this->setSticker( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
+        return $this->setSticker( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
     }
 
     public function setStickerByFileId ( $id )
     {
-        $this->setSticker( InputFileHelper::inputFileByFileId( $id ) );
+        return $this->setSticker( InputFileHelper::inputFileByFileId( $id ) );
     }
 
     protected function configure ()

@@ -35,12 +35,12 @@ class SendVoice extends _GeneralSendModel
 
     public function setVoiceByPath ( $path, $mime = null, $postname = null )
     {
-        $this->setVoice( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
+        return $this->setVoice( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
     }
 
     public function setVoiceByFileId ( $id )
     {
-        $this->setVoice( InputFileHelper::inputFileByFileId( $id ) );
+        return $this->setVoice( InputFileHelper::inputFileByFileId( $id ) );
     }
 
     protected function configure ()

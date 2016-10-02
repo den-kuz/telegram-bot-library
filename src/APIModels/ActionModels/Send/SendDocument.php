@@ -35,12 +35,12 @@ class SendDocument extends _GeneralSendModel
 
     public function setDocumentByPath ( $path, $mime = null, $postname = null )
     {
-        $this->setDocument( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
+        return $this->setDocument( InputFileHelper::inputFileByPath( $path, $mime, $postname ) );
     }
 
     public function setDocumentByFileId ( $id )
     {
-        $this->setDocument( InputFileHelper::inputFileByFileId( $id ) );
+        return $this->setDocument( InputFileHelper::inputFileByFileId( $id ) );
     }
 
     protected function configure ()
