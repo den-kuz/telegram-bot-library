@@ -102,7 +102,7 @@ class TelegramBot
 
         return $this->botUser;
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="Getting updates">
 
     /**
@@ -703,8 +703,7 @@ class TelegramBot
     {
         $paths = SSLCertificateGenerator::generate( $serverName );
 
-        $setWh = new SetWebhook();
-        $setWh->setCertificateByPath( $paths[ 'certificatePath' ] )->setUrl( $url );
+        $setWh = ( new SetWebhook() )->setCertificateByPath( $paths[ 'certificatePath' ] )->setUrl( $url );
 
         return $this->setWebhook( $setWh );
     }
