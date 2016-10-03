@@ -24,7 +24,7 @@ trait FileSystemHelper
         $fullFilePath .= !is_null( $saveFileExtension ) ? '.' . $saveFileExtension : '';
 
         $writeResult = file_put_contents( $fullFilePath, $content );
-        if ( $writeResult ) {
+        if ( !$writeResult ) {
             throw new TelegramException( 'Can not write in file "' . $fullFilePath . '"' );
         }
 
